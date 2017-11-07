@@ -1,0 +1,15 @@
+@font-face {
+    font-family: "custom-play";
+    src: url('play.woff2') format('woff');
+}
+@font-face {
+    font-family: "custom-dig";
+    src: url('digital_(mono).ttf') format('truetype');
+}
+body {
+    position: relative;
+    margin: 0;
+    background-color: white;
+	display: flex;
+	justify-content: center;
+}
