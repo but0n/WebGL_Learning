@@ -29,10 +29,22 @@ gl.useProgram(shaderProgram);
 
 let attrloc = gl.getAttribLocation(shaderProgram, "pos");
 
-for(let a = 0; a<100; a++) {
-    gl.vertexAttrib2f(attrloc, a/100, a/100*a/100);
-    gl.drawArrays(gl.POINTS, 0, 1);
-}
+
+
+// Create buffer
+// let buf = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0,0, -0.5,0.5, 0.5,0, 0,0.5]), gl.STATIC_DRAW);
+gl.enableVertexAttribArray(attrloc);
+gl.vertexAttribPointer(attrloc, 2, gl.FLOAT, false, 0, 0);
+
+gl.drawArrays(gl.POINTS, 0, 4);
+
+
+// for(let a = 0; a<100; a++) {
+//     gl.vertexAttrib3f(attrloc, a/100, a/100*a/100, a/100);
+//     gl.drawArrays(gl.POINTS, 0, 1);
+// }
 
 
 
