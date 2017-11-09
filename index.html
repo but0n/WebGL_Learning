@@ -15,7 +15,7 @@
             varying vec4 v_color;
             void main () {
                 gl_Position = vec4(pos, 0, 1);
-                v_color = vec4(pos, 1.0, 1.0);
+                v_color = vec4(pos+vec2(0.6, 0.2), 1.0, 1.0);
             }
         </script>
         <script id="Shader-fs" type="x-shader/x-fragment">
