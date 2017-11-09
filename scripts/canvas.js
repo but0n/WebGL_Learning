@@ -14,6 +14,8 @@ function getShader(e, GL_ctx) {
     GL_ctx.compileShader(shader);
     if(GL_ctx.getShaderParameter(shader, gl.COMPILE_STATUS) === true)
         return shader;
+    else
+        (console.log( GL_ctx.getShaderInfoLog(shader)));
 }
 
 let shaderProgram = gl.createProgram();
@@ -25,16 +27,12 @@ gl.attachShader(shaderProgram, getShader('Shader-fs', gl));
 gl.linkProgram(shaderProgram);
 gl.useProgram(shaderProgram);
 
-let buf = gl.createBuffer();
-gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-
-gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0, 0, 1, 0, -1, 1]), gl.STATIC_DRAW);
-
 let attrloc = gl.getAttribLocation(shaderProgram, "pos");
-gl.enableVertexAttribArray(attrloc);
-gl.vertexAttribPointer(attrloc, 2, gl.FLOAT, false, 0, 0);
 
-gl.drawArrays(gl.TRIANGLES, 0, 3);
+for(let a = 0; a<100; a++) {
+    gl.vertexAttrib2f(attrloc, a/100, a/100*a/100);
+    gl.drawArrays(gl.POINTS, 0, 1);
+}
 
 
 
