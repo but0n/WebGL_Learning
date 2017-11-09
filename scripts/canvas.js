@@ -32,13 +32,14 @@ let attrloc = gl.getAttribLocation(shaderProgram, "pos");
 
 
 // Create buffer
-// let buf = gl.createBuffer();
-gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
-gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0,0, -0.5,0.5, 0.5,0, 0,0.5]), gl.STATIC_DRAW);
-gl.enableVertexAttribArray(attrloc);
+let buf = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0,0, -0.5,0.8, 0.5,0, 0,0.8]), gl.STATIC_DRAW);
 gl.vertexAttribPointer(attrloc, 2, gl.FLOAT, false, 0, 0);
 
-gl.drawArrays(gl.POINTS, 0, 4);
+gl.enableVertexAttribArray(attrloc);
+
+gl.drawArrays(gl.LINE_LOOP, 0, 4);
 
 
 // for(let a = 0; a<100; a++) {
