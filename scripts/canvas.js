@@ -28,35 +28,50 @@ gl.linkProgram(shaderProgram);
 gl.useProgram(shaderProgram);
 
 let attrloc = gl.getAttribLocation(shaderProgram, "pos");
-let offsetLoc = gl.getAttribLocation(shaderProgram, "a_offset");
-let offs = 0;
-gl.vertexAttrib4f(offsetLoc, offs, offs, offs, 0);
+
 
 
 // Create buffer
 let buf = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-0.3,0, 0.3,0, 0,0.8]), gl.STATIC_DRAW);
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-0.3,0.0, 0.3,0.0, 0.0,0.5]), gl.STATIC_DRAW);
 gl.vertexAttribPointer(attrloc, 2, gl.FLOAT, false, 0, 0);
 
 gl.enableVertexAttribArray(attrloc);
 
-// gl.drawArrays(gl.TRIANGLES, 0, 3);
-let times = 0.5;
+
+function ang(e) {return Math.PI*e/180.0;}
+let a = 0;
+let cosB = Math.cos(ang(a));
+let sinB = Math.sin(ang(a));
+
+let matrix = new Float32Array([
+    cosB, sinB, 0.0, 0.0,
+    -sinB, cosB, 0.0, 0.0,
+    0.0, 0.0, 1.0, 0.0,
+    0.0, 0.0, 0.0, 1.0
+]);
+
+let matrixLocation = gl.getUniformLocation(shaderProgram, 'u_rotation');
+gl.uniformMatrix4fv(matrixLocation, false, matrix);
+gl.drawArrays(gl.LINE_LOOP, 0, 3);
+
 function move() {
-    for(let a = 0; a<100; a++) {
-        gl.vertexAttrib4f(offsetLoc, a/100-0.9+times, -0.9+times-a/100, 0, a/100*2);
+
+    for(let a = 0; a<100; a+=3) {
+        let cosB = Math.cos(ang(a));
+        let sinB = Math.sin(ang(a));
+
+        let matrix = new Float32Array([
+            cosB, sinB, 0.0, 0.0,
+            -sinB, cosB, 0.0, 0.0,
+            0.0, 0.0, 1.0, 0.0,
+            0.0, 0.0, 0.0, 1.0
+        ]);
+        gl.uniformMatrix4fv(matrixLocation, false, matrix);
         gl.drawArrays(gl.LINE_LOOP, 0, 3);
     }
-    times = times + 0.01;
-
 }
-
-
-// for(let a = 0; a<100; a++) {
-//     gl.vertexAttrib3f(attrloc, a/100, a/100*a/100, a/100);
-//     gl.drawArrays(gl.POINTS, 0, 1);
-// }
 
 
 
