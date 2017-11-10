@@ -28,7 +28,9 @@ gl.linkProgram(shaderProgram);
 gl.useProgram(shaderProgram);
 
 let attrloc = gl.getAttribLocation(shaderProgram, "pos");
-
+let offsetLoc = gl.getAttribLocation(shaderProgram, "a_offset");
+let offs = 0;
+gl.vertexAttrib4f(offsetLoc, offs, offs, offs, 0);
 
 
 // Create buffer
@@ -39,7 +41,16 @@ gl.vertexAttribPointer(attrloc, 2, gl.FLOAT, false, 0, 0);
 
 gl.enableVertexAttribArray(attrloc);
 
-gl.drawArrays(gl.TRIANGLES, 0, 3);
+// gl.drawArrays(gl.TRIANGLES, 0, 3);
+let times = 0.5;
+function move() {
+    for(let a = 0; a<100; a++) {
+        gl.vertexAttrib4f(offsetLoc, a/100-0.9+times, -0.9+times-a/100, 0, a/100*2);
+        gl.drawArrays(gl.LINE_LOOP, 0, 3);
+    }
+    times = times + 0.01;
+
+}
 
 
 // for(let a = 0; a<100; a++) {

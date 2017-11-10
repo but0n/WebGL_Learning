@@ -8,14 +8,15 @@
     </head>
     <body>
 
-        <canvas class="ctx" width="1080px" height="720px"></canvas>
+        <canvas class="ctx" width="1080px" height="720px" onclick="move()"></canvas>
 
         <script id="Shader-vs" type="x-shader/x-vertex">
             attribute vec2 pos;
+            attribute vec4 a_offset;
             varying vec4 v_color;
             void main () {
-                gl_Position = vec4(pos, 0, 1);
-                v_color = vec4(pos+vec2(0.6, 0.2), 1.0, 1.0);
+                gl_Position = vec4(pos, 0, 1) + a_offset;
+                v_color = vec4(pos, 1.0, 1.0) + a_offset;
             }
         </script>
         <script id="Shader-fs" type="x-shader/x-fragment">
