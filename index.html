@@ -16,14 +16,14 @@
             varying vec4 v_color;
             void main () {
                 gl_Position = u_ModelMatrix * vec4(pos, 1.0);
-                v_color = vec4(0.0, 0.0, 1.0, 1.0);
+                v_color = vec4(pos, 1.0);
             }
         </script>
         <script id="Shader-fs" type="x-shader/x-fragment">
             precision mediump float;
             varying vec4 v_color;
             void main () {
-                gl_FragColor = v_color;
+                gl_FragColor = vec4(gl_FragCoord.x/720.0, gl_FragCoord.y/720.0, (gl_FragCoord.x + gl_FragCoord.y)/1440.0, 1.0);
             }
         </script>
 
