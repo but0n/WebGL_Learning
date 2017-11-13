@@ -102,12 +102,13 @@ function Matrix4() {
 
     this.rotate = (angle, x, y, z) => {
         if((x|y|z) && angle!=0) { // if current opreation is valid
+            let tmp;
             if(x) {
-                let tmp = this.rotateXMatrix(angle);
+                tmp = this.rotateXMatrix(angle);
             } else if(y) {
-                let tmp = this.rotateYMatrix(angle);
+                tmp = this.rotateYMatrix(angle);
             } else if(z) {
-                let tmp = this.rotateZMatrix(angle);
+                tmp = this.rotateZMatrix(angle);
             }
             this.elements = this.MatrixMuilt(this.elements, tmp);
         }
