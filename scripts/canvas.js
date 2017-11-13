@@ -40,35 +40,23 @@ gl.vertexAttribPointer(attrloc, 2, gl.FLOAT, false, 0, 0);
 gl.enableVertexAttribArray(attrloc);
 
 
-function ang(e) {return Math.PI*e/180.0;}
-let a = 0;
-let cosB = Math.cos(ang(a));
-let sinB = Math.sin(ang(a));
+let matrix = new Matrix4();
 
-let matrix = new Float32Array([
-    cosB, sinB, 0.0, 0.0,
-    -sinB, cosB, 0.0, 0.0,
-    0.0, 0.0, 1.0, 0.0,
-    0.0, 0.0, 0.0, 1.0
-]);
 
-let matrixLocation = gl.getUniformLocation(shaderProgram, 'u_rotation');
-gl.uniformMatrix4fv(matrixLocation, false, matrix);
+let matrixLocation = gl.getUniformLocation(shaderProgram, 'u_ModelMatrix');
+gl.uniformMatrix4fv(matrixLocation, false, matrix.elements);
 gl.drawArrays(gl.LINE_LOOP, 0, 3);
 
 function move() {
+    let matrix = new Matrix4();
+    matrix.setScale(0.8, 0.8, 0.8);
 
-    for(let a = 0; a<100; a+=3) {
-        let cosB = Math.cos(ang(a));
-        let sinB = Math.sin(ang(a));
+    for(let a = 0; a<200; a++) {
+        matrix.rotate(5, 0, 0, 1);
+        matrix.rotate(10, 0, 1, 0);
+        matrix.translate(0, 0, 0);
 
-        let matrix = new Float32Array([
-            cosB, sinB, 0.0, 0.0,
-            -sinB, cosB, 0.0, 0.0,
-            0.0, 0.0, 1.0, 0.0,
-            0.0, 0.0, 0.0, 1.0
-        ]);
-        gl.uniformMatrix4fv(matrixLocation, false, matrix);
+        gl.uniformMatrix4fv(matrixLocation, false, matrix.elements);
         gl.drawArrays(gl.LINE_LOOP, 0, 3);
     }
 }
