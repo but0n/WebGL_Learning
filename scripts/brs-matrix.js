@@ -97,7 +97,7 @@ function Matrix4() {
 // Multi-F
     this.translate = (x, y, z) => {
         let tmp = this.translateMatrix(x, y, z);
-        this.elements = this.MatrixMuilt(this.elements, tmp);
+        this.elements = this.MatrixMuilt(tmp, this.elements);
     }
 
     this.rotate = (angle, x, y, z) => {
@@ -110,12 +110,12 @@ function Matrix4() {
             } else if(z) {
                 tmp = this.rotateZMatrix(angle);
             }
-            this.elements = this.MatrixMuilt(this.elements, tmp);
+            this.elements = this.MatrixMuilt(tmp, this.elements);
         }
     }
     this.scale = (x, y, z) => {
         let tmp = this.scaleMatrix(x, y, z);
-        this.elements = this.MatrixMuilt(this.elements, tmp);
+        this.elements = this.MatrixMuilt(tmp, this.elements);
     }
 
     this.set = (m) => {
