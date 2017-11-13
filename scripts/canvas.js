@@ -34,30 +34,42 @@ let attrloc = gl.getAttribLocation(shaderProgram, "pos");
 // Create buffer
 let buf = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-0.3,0.0, 0.3,0.0, 0.0,0.5]), gl.STATIC_DRAW);
-gl.vertexAttribPointer(attrloc, 2, gl.FLOAT, false, 0, 0);
+let halfl = 0.4;
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
+    halfl, halfl, halfl,
+    halfl, -halfl, halfl,
+    -halfl, -halfl, halfl,
+    -halfl, halfl, halfl,
+
+    halfl, halfl, -halfl,
+    halfl, -halfl, -halfl,
+    -halfl, -halfl, -halfl,
+    -halfl, halfl, -halfl
+]), gl.STATIC_DRAW);
+gl.vertexAttribPointer(attrloc, 3, gl.FLOAT, false, 0, 0);
 
 gl.enableVertexAttribArray(attrloc);
 
 
 let matrix = new Matrix4();
 
+matrix.rotate(-30 , 1, 0, 0);
 
 let matrixLocation = gl.getUniformLocation(shaderProgram, 'u_ModelMatrix');
 gl.uniformMatrix4fv(matrixLocation, false, matrix.elements);
-gl.drawArrays(gl.LINE_LOOP, 0, 3);
+gl.drawArrays(gl.LINE_LOOP, 0, 8);
 
 function move() {
     let matrix = new Matrix4();
     matrix.setScale(0.8, 0.8, 0.8);
+    matrix.rotate(-30 , 1, 0, 0);
 
-    for(let a = 0; a<200; a++) {
-        matrix.rotate(5, 0, 0, 1);
-        matrix.rotate(10, 0, 1, 0);
+    for(let a = 0; a<20; a++) {
+        matrix.rotate(1, 0, 1, 0);
         matrix.translate(0, 0, 0);
 
         gl.uniformMatrix4fv(matrixLocation, false, matrix.elements);
-        gl.drawArrays(gl.LINE_LOOP, 0, 3);
+        gl.drawArrays(gl.LINE_LOOP, 0, 8);
     }
 }
 
