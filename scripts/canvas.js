@@ -88,8 +88,7 @@ let move = () => {
     matrix.rotate(-60/1000*d, 0, 1, 0);
     gl.uniformMatrix4fv(matrixLocation, false, matrix.elements);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-    console.log('FPS:'+d);
-    console.log(matrix.elements);
+    console.log('FPS:'+Math.floor(1000/d));
 
 
     requestAnimationFrame(move);
