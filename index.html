@@ -11,19 +11,21 @@
         <canvas class="ctx" width="720px" height="720px" onclick="move()"></canvas>
 
         <script id="Shader-vs" type="x-shader/x-vertex">
-            attribute vec3 pos;
+            attribute vec2 pos;
             uniform mat4 u_ModelMatrix;
-            varying vec4 v_color;
+            attribute vec2 a_TexCoords;
+            varying vec2 v_TexCoords;
             void main () {
-                gl_Position = u_ModelMatrix * vec4(pos, 1.0);
-                v_color = vec4(pos, 1.0);
+                gl_Position = u_ModelMatrix * vec4(pos, 0.0, 1.0);
+                v_TexCoords = a_TexCoords;
             }
         </script>
         <script id="Shader-fs" type="x-shader/x-fragment">
             precision mediump float;
-            varying vec4 v_color;
+            uniform sampler2D u_texture;
+            varying vec2 v_TexCoords;
             void main () {
-                gl_FragColor = vec4(gl_FragCoord.x/720.0, gl_FragCoord.y/720.0, (gl_FragCoord.x + gl_FragCoord.y)/1440.0, 1.0);
+                gl_FragColor = texture2D(u_texture, v_TexCoords);
             }
         </script>
 

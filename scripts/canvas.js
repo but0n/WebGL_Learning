@@ -28,51 +28,71 @@ gl.linkProgram(shaderProgram);
 gl.useProgram(shaderProgram);
 
 let attrloc = gl.getAttribLocation(shaderProgram, "pos");
-
+let coordsLoc = gl.getAttribLocation(shaderProgram, "a_TexCoords");
 
 
 // Create buffer
 let buf = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, buf);
-let halfl = 0.4;
-gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-    halfl, halfl, halfl,
-    halfl, -halfl, halfl,
-    -halfl, -halfl, halfl,
-    -halfl, halfl, halfl,
+let halfl = 0.5;
+let spots = new Float32Array([
+    halfl, halfl, 1.0, 1.0,
+    halfl, -halfl, 1.0, 0.0,
+    -halfl, halfl, 0.0, 1.0,
+    -halfl, -halfl, 0.0, 0.0,
+]);
+let FSIZE = spots.BYTES_PER_ELEMENT;
+gl.bufferData(gl.ARRAY_BUFFER, spots, gl.STATIC_DRAW);
 
-    halfl, halfl, -halfl,
-    halfl, -halfl, -halfl,
-    -halfl, -halfl, -halfl,
-    -halfl, halfl, -halfl
-]), gl.STATIC_DRAW);
-gl.vertexAttribPointer(attrloc, 3, gl.FLOAT, false, 0, 0);
-
+gl.vertexAttribPointer(attrloc, 2, gl.FLOAT, false, FSIZE*4, 0);
 gl.enableVertexAttribArray(attrloc);
+
+gl.vertexAttribPointer(coordsLoc, 2, gl.FLOAT, false, FSIZE*4, FSIZE*2);
+gl.enableVertexAttribArray(coordsLoc);
+
+
+// Textrue
+let texture = gl.createTexture(); // Create Textrue
+let textureLoc = gl.getUniformLocation(shaderProgram, 'u_texture');
+// Get location
+
+let image = new Image();
+image.src = '/hello.png';
+image.onload = () => {
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    // Configure
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
+    // Sending data
+    gl.uniform1i(textureLoc, 0);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+};
 
 
 let matrix = new Matrix4();
 
-matrix.rotate(-30 , 1, 0, 0);
-
 let matrixLocation = gl.getUniformLocation(shaderProgram, 'u_ModelMatrix');
 gl.uniformMatrix4fv(matrixLocation, false, matrix.elements);
-gl.drawArrays(gl.LINE_LOOP, 0, 8);
+// gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
 
-function move() {
-    let matrix = new Matrix4();
-    matrix.setScale(0.8, 0.8, 0.8);
-    matrix.rotate(-30 , 1, 0, 0);
 
-    for(let a = 0; a<20; a++) {
-        matrix.rotate(1, 0, 1, 0);
-        matrix.translate(0, 0, 0);
 
-        gl.uniformMatrix4fv(matrixLocation, false, matrix.elements);
-        gl.drawArrays(gl.LINE_LOOP, 0, 8);
-    }
+let last_time = Date.now();
+let move = () => {
+    let d = Date.now() - last_time;
+    last_time = Date.now();
+
+    matrix.rotate(30/1000*d, 0, 0, 1);
+    gl.uniformMatrix4fv(matrixLocation, false, matrix.elements);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    console.log('FPS:'+d);
+    console.log(matrix.elements);
+
+    requestAnimationFrame(move);
 }
-
+// move();
 
 
 
