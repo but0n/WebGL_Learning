@@ -72,7 +72,8 @@ image.onload = () => {
 
 
 let matrix = new Matrix4();
-
+matrix.rotate(-45, 1, 0, 0);
+matrix.rotate(-45, 0, 0, 1);
 let matrixLocation = gl.getUniformLocation(shaderProgram, 'u_ModelMatrix');
 gl.uniformMatrix4fv(matrixLocation, false, matrix.elements);
 // gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
@@ -84,11 +85,12 @@ let move = () => {
     let d = Date.now() - last_time;
     last_time = Date.now();
 
-    matrix.rotate(30/1000*d, 0, 0, 1);
+    matrix.rotate(-60/1000*d, 0, 1, 0);
     gl.uniformMatrix4fv(matrixLocation, false, matrix.elements);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     console.log('FPS:'+d);
     console.log(matrix.elements);
+
 
     requestAnimationFrame(move);
 }
