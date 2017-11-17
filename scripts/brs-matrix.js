@@ -93,11 +93,16 @@ function Matrix4() {
         arr = new Float32Array(arr);
         return arr;
     }
+    this.multiply = (a) => {
+        if(a.constructor.name === "Matrix4") {
+            a = a.elements;
+        }
+        this.elements = this.MatrixMuilt(a, this.elements);
+    }
 
 // Multi-F
     this.translate = (x, y, z) => {
-        let tmp = this.translateMatrix(x, y, z);
-        this.elements = this.MatrixMuilt(tmp, this.elements);
+        this.multiply(this.translateMatrix(x, y, z));
     }
 
     this.rotate = (angle, x, y, z) => {
@@ -110,12 +115,11 @@ function Matrix4() {
             } else if(z) {
                 tmp = this.rotateZMatrix(angle);
             }
-            this.elements = this.MatrixMuilt(tmp, this.elements);
+            this.multiply(tmp);
         }
     }
     this.scale = (x, y, z) => {
-        let tmp = this.scaleMatrix(x, y, z);
-        this.elements = this.MatrixMuilt(tmp, this.elements);
+        this.multiply(this.scaleMatrix(x, y, z));
     }
 
     this.set = (m) => {
@@ -123,4 +127,45 @@ function Matrix4() {
             this.elements = m.elements;
     }
 
+// View matrix
+    this.setLookAt = (eyeX, eyeY, eyeZ, atX, atY, atZ, upX, upY, upZ) => {
+        let zAxis = normalize(substractVectors(
+            [eyeX, eyeY, eyeZ],
+            [atX, atY, atZ])
+        );
+        let xAxis = cross([upX, upY, upZ], zAxis);
+        let yAxis = cross(zAxis, xAxis);
+
+        this.elements = new Float32Array([
+            xAxis[0], xAxis[1], xAxis[2], 0,
+            yAxis[0], yAxis[1], yAxis[2], 0,
+            zAxis[0], zAxis[1], zAxis[2], 0,
+            -eyeX    , -eyeY    , -eyeZ    , 1
+        ]);
+    }
+
+}
+
+
+// Vector functions
+function cross(a, b) {
+    return [
+        a[1] * b[2] - a[2] * b[1],  // X = a.y * b.z - a.z * b.y
+        a[2] * b[0] - a[0] * b[2],  // Y = a.z * b.x - a.x * b.z
+        a[0] * b[1] - a[1] * b[0]   // Z = a.x * b.y - a.y * b.x
+    ];
+}
+
+function substractVectors(a, b) {
+    return [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
+}
+
+function normalize(v) {
+    let length = Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+    // Make sure length > 0
+    if(length > 0) {
+        return [v[0]/length, v[1]/length, v[2]/length];
+    } else {
+        return [0,0,0];
+    }
 }

@@ -74,6 +74,11 @@ image.onload = () => {
 let matrix = new Matrix4();
 matrix.rotate(-45, 1, 0, 0);
 matrix.rotate(-45, 0, 0, 1);
+
+let view = new Matrix4();
+view.setLookAt(0.5, 0, 0, 0.5, 0, -1, 0, 1, 0);
+matrix.multiply(view);
+
 let matrixLocation = gl.getUniformLocation(shaderProgram, 'u_ModelMatrix');
 gl.uniformMatrix4fv(matrixLocation, false, matrix.elements);
 // gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
