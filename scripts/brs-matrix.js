@@ -127,7 +127,7 @@ function Matrix4() {
             this.elements = m.elements;
     }
 
-// View matrix
+// View matrix - Override this.elements
     this.setLookAt = (eyeX, eyeY, eyeZ, atX, atY, atZ, upX, upY, upZ) => {
         let zAxis = normalize(substractVectors(
             [eyeX, eyeY, eyeZ],
@@ -141,6 +141,24 @@ function Matrix4() {
             yAxis[0], yAxis[1], yAxis[2], 0,
             zAxis[0], zAxis[1], zAxis[2], 0,
             -eyeX    , -eyeY    , -eyeZ    , 1
+        ]);
+    }
+
+// Projection matrix - Override this.elements
+    this.setOrtho = (left, right, bottom, top, near, far) => {
+        this.elements = new Float32Array([
+            2 / (right-left), 0, 0, 0,
+            0, 2 / (top-bottom), 0, 0,
+            0, 0, -2 / (far-near), 0,
+            (right+left) / (left-right), (top+bottom) / (bottom-top), (far+near) / (near-far), 1
+        ]);
+    }
+    this.setPerspective = (fov, aspect, near, far) => {
+        this.elements = new Float32Array([
+            1 / (aspect * Math.tan(fov/2)), 0, 0, 0,
+            0, 1 / Math.tan(fov/2), 0, 0,
+            0, 0, (far+near) / (near-far), -1,
+            0, 0, 2*far*near / (near-far), 0
         ]);
     }
 
