@@ -1,4 +1,5 @@
-#define N 5
+#include <stdio.h>
+#define N 8
 static unsigned short   buf[N];
 
 #define CLEAN_BUFF() do{\
@@ -39,7 +40,6 @@ unsigned char flag = 0;
 void q(char y) {
     if(y >= N) {
         console();
-        return 0;
     }
     for(unsigned char x = 0; x < N; x++) {
         if(isLeagul(x, y)) {
@@ -49,9 +49,10 @@ void q(char y) {
         }
         if(x==N-1) {
             printf("Error at %d\n", y);
+            flag++;
             y -= 1;
             if(y<0) y=0;
-            buf[y]>>1;
+            buf[y] = buf[y]<<1;
             q(y);
         }
     }
