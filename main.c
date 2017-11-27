@@ -49,9 +49,10 @@ void q(char y) {
         }
         if(x==N-1) {
             printf("Error at %d\n", y);
-            // y -= 1;
-            // buf[y]>>1;
-            // q(y);
+            y -= 1;
+            if(y<0) y=0;
+            buf[y]>>1;
+            q(y);
         }
     }
 }
