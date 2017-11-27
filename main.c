@@ -1,9 +1,8 @@
-#define N 8
-
-static unsigned char        buf[N+1];
+#define N 5
+static unsigned short   buf[N];
 
 #define CLEAN_BUFF() do{\
-    for(unsigned char t = 0; t <= N; t++)\
+    for(unsigned char t = 0; t < N; t++)\
         buf[t] = 0;\
 } while(0);
 
@@ -11,59 +10,56 @@ static unsigned char        buf[N+1];
 
 
 static unsigned char isLeagul(unsigned char x, unsigned char y);
-static void q(unsigned char y);
+static void q(char y);
 static void console();
 
 
 int main() {
     CLEAN_BUFF();
-    q(1);
+    q(0);
     console();
-
 }
 
 
 unsigned char isLeagul(unsigned char x, unsigned char y) {
-
-    // Row
-    if(buf[y]) {
+    unsigned short coluOr = 0;
+    for(unsigned char i = 0; i < N; i++) {
+        coluOr |= buf[i] & (1<<x);
+    }
+    unsigned short delta = 0;
+    for(unsigned char i = 0; i < N; i++) {
+        delta |= ((buf[i]>>ABS(y-i)) | (buf[i]<<ABS(y-i))) & (1<<x);
+    }
+    if((buf[y]==0) && (coluOr==0) && (delta == 0))
+        return 1;
+    else
         return 0;
-    }
-    // Column
-    for(unsigned char t = 1; t <= N; t++) {
-        if(buf[t] == x) {
-            return 0;
-
-        }
-    }
-    // 斜线
-    // |dX/dY|
-    unsigned char delta = ABS(x-y);
-    for(unsigned char y = 1; y <= N; y++) {
-
-        if(ABS(buf[y]-y) == delta) {
-            return 0;
-        }
-    }
-
-    return 1;
 }
-
-void q(unsigned char y) {
+unsigned char flag = 0;
+void q(char y) {
     if(y >= N) {
         console();
         return 0;
     }
-    for(unsigned char x = 1; x <= N; x++) {
+    for(unsigned char x = 0; x < N; x++) {
         if(isLeagul(x, y)) {
-            buf[y] = x;
+            buf[y] |= 1<<x;
             q(y+1);
+            break;
+        }
+        if(x==N-1) {
+            printf("Error at %d\n", y);
+            // y -= 1;
+            // buf[y]>>1;
+            // q(y);
         }
     }
 }
 void console() {
     printf("----\n");
-    for(unsigned char i = 1; i <= N; i++) {
-        printf("%d, %d\n", i,buf[i]);
+    for(unsigned char i = 0; i < N; i++) {
+        for(unsigned char b = 0; b < N; b++)
+            printf("%d ", buf[i]>>b & 1);
+        printf("\n");
     }
 }
