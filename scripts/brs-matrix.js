@@ -154,11 +154,13 @@ function Matrix4() {
         ]);
     }
     this.setPerspective = (fov, aspect, near, far) => {
+        let ct = Math.tan(fov/2);
+        let rd = 1 / (far-near);
         this.elements = new Float32Array([
-            1 / (aspect * Math.tan(fov/2)), 0, 0, 0,
-            0, 1 / Math.tan(fov/2), 0, 0,
-            0, 0, (far+near) / (near-far), -1,
-            0, 0, 2*far*near / (near-far), 0
+            ct/aspect, 0, 0, 0,
+            0, ct, 0, 0,
+            0, 0, -(far+near) * rd, -1,
+            0, 0, -2*far*near*rd, 0
         ]);
     }
 

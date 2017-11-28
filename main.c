@@ -1,5 +1,5 @@
 #include <stdio.h>
-#define N 15
+#define N 10
 static unsigned int   buf[N];
 
 #define CLEAN_BUFF() do{\
@@ -12,12 +12,14 @@ static unsigned int   buf[N];
 
 unsigned char isLeagul(unsigned int x, unsigned int y);
 static void q();
-static void console(unsigned int t);
+static void console(unsigned long int t);
 
+unsigned long int result = 0;
 
 int main() {
     CLEAN_BUFF();
     q();
+    console(result);
 }
 
 
@@ -37,7 +39,6 @@ unsigned char isLeagul(unsigned int x, unsigned int y) {
 }
 
 void q() {
-    unsigned int t = 0;
     unsigned int y = 0, x = 1;
     while(y < N) {
         while(x < 1<<N) {
@@ -62,12 +63,9 @@ void q() {
             }
         }
         if(y == N-1) {
-            t++;
-            console(t);
+            result++;
             x = buf[y]<<1;
             buf[y] = 0;
-            if(t > 1000) // Fix time limmit
-                break;
             continue;
         }
 
@@ -75,11 +73,11 @@ void q() {
     }
 
 }
-void console(unsigned int t) {
-    printf("%03d-----\n", t);
-    for(unsigned char i = 0; i < N; i++) {
-        for(unsigned char b = 0; b < N; b++)
-            printf("%d ", buf[i]>>b & 1);
-        printf("\n");
-    }
+void console(unsigned long int t) {
+    printf("%d: %03d-----\n", N, t);
+    // for(unsigned char i = 0; i < N; i++) {
+    //     for(unsigned char b = 0; b < N; b++)
+    //         printf("%d ", buf[i]>>b & 1);
+    //     printf("\n");
+    // }
 }
