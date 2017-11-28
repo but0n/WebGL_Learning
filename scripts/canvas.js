@@ -162,6 +162,13 @@ let ld = new Vector3([0.5, 3.0, 4.0]);
 ld.normalize();
 gl.uniform3fv(lightDirectionLoc, ld.elements);
 
+// Normal Matrix
+let nm = new Matrix4();
+let nmLoc = gl.getUniformLocation(shaderProgram, "u_normalMatrix");
+nm.setInverseOf(model);
+nm.transpose();
+gl.uniformMatrix4fv(nmLoc, false, nm.elements);
+
 let ambLoc = gl.getUniformLocation(shaderProgram, "u_ambientLight");
 gl.uniform3f(ambLoc, 0.2, 0.2, 0.2);
 
@@ -179,6 +186,10 @@ let move = () => {
     gl.uniformMatrix4fv(modelLocation, false, model.elements);
     gl.uniformMatrix4fv(viewLocation, false, view.elements);
     gl.uniformMatrix4fv(projeLocation, false, proje.elements);
+    nm.setInverseOf(model);
+    nm.transpose();
+    gl.uniformMatrix4fv(nmLoc, false, nm.elements);
+
     gl.drawElements(gl.TRIANGLES, 36, gl.UNSIGNED_BYTE, 0); // Render
 
     console.log('FPS:'+Math.floor(1000/d));
