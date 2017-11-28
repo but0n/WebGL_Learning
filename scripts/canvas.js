@@ -154,12 +154,16 @@ let projeLocation = gl.getUniformLocation(shaderProgram, 'u_ProjeMatrix');
 gl.uniformMatrix4fv(modelLocation, false, model.elements);
 gl.uniformMatrix4fv(viewLocation, false, view.elements);
 gl.uniformMatrix4fv(projeLocation, false, proje.elements);
-
+// Light uniform
 let lightColorLoc = gl.getUniformLocation(shaderProgram, "u_lightColor");
 gl.uniform3f(lightColorLoc, 1.0, 1.0, 1.0);
 let lightDirectionLoc = gl.getUniformLocation(shaderProgram, "u_lightDirection");
 let ld = new Vector3([0.5, 3.0, 4.0]);
+ld.normalize();
 gl.uniform3fv(lightDirectionLoc, ld.elements);
+
+let ambLoc = gl.getUniformLocation(shaderProgram, "u_ambientLight");
+gl.uniform3f(ambLoc, 0.2, 0.2, 0.2);
 
 gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_COLOR_BIT);
 gl.drawElements(gl.TRIANGLES, 36, gl.UNSIGNED_BYTE, 0);
