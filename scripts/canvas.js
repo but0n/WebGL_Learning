@@ -27,82 +27,39 @@ gl.attachShader(shaderProgram, getShader('Shader-fs', gl));
 gl.linkProgram(shaderProgram);
 gl.useProgram(shaderProgram);
 
-let attrloc = gl.getAttribLocation(shaderProgram, "a_Position");
 // let coloc = gl.getAttribLocation(shaderProgram, "a_Color");
-let texLoc = gl.getAttribLocation(shaderProgram, "a_texCoord");
 
-
-
-// NOTE:Cube
-// Vertex origin data
-// var vertices = new Float32Array([   // Vertex coordinates
-//    1.0, 1.0, 1.0,  -1.0, 1.0, 1.0,  -1.0,-1.0, 1.0,   1.0,-1.0, 1.0,    // v0-v1-v2-v3 front
-//    1.0, 1.0, 1.0,   1.0,-1.0, 1.0,   1.0,-1.0,-1.0,   1.0, 1.0,-1.0,    // v0-v3-v4-v5 right
-//    1.0, 1.0, 1.0,   1.0, 1.0,-1.0,  -1.0, 1.0,-1.0,  -1.0, 1.0, 1.0,    // v0-v5-v6-v1 up
-//   -1.0, 1.0, 1.0,  -1.0, 1.0,-1.0,  -1.0,-1.0,-1.0,  -1.0,-1.0, 1.0,    // v1-v6-v7-v2 left
-//   -1.0,-1.0,-1.0,   1.0,-1.0,-1.0,   1.0,-1.0, 1.0,  -1.0,-1.0, 1.0,    // v7-v4-v3-v2 down
-//    1.0,-1.0,-1.0,  -1.0,-1.0,-1.0,  -1.0, 1.0,-1.0,   1.0, 1.0,-1.0     // v4-v7-v6-v5 back
-// ]);
-//
-// var colors = new Float32Array([     // Colors
-//   1.0, 1.0, 1.0,  1.0, 1.0, 1.0,  1.0, 1.0, 1.0,  1.0, 1.0, 1.0,  // v0-v1-v2-v3 front(white)
-//   1.0, 1.0, 1.0,  1.0, 1.0, 1.0,  1.0, 1.0, 1.0,  1.0, 1.0, 1.0,  // v0-v3-v4-v5 right(white)
-//   1.0, 1.0, 1.0,  1.0, 1.0, 1.0,  1.0, 1.0, 1.0,  1.0, 1.0, 1.0,  // v0-v5-v6-v1 up(white)
-//   1.0, 1.0, 1.0,  1.0, 1.0, 1.0,  1.0, 1.0, 1.0,  1.0, 1.0, 1.0,  // v1-v6-v7-v2 left(white)
-//   1.0, 1.0, 1.0,  1.0, 1.0, 1.0,  1.0, 1.0, 1.0,  1.0, 1.0, 1.0,  // v7-v4-v3-v2 down(white)
-//   1.0, 1.0, 1.0,  1.0, 1.0, 1.0,  1.0, 1.0, 1.0,  1.0, 1.0, 1.0   // v4-v7-v6-v5 back(white)
-// ]);
-//
-// var normals = new Float32Array([    // Normal
-//   0.0, 0.0, 1.0,   0.0, 0.0, 1.0,   0.0, 0.0, 1.0,   0.0, 0.0, 1.0,  // v0-v1-v2-v3 front
-//   1.0, 0.0, 0.0,   1.0, 0.0, 0.0,   1.0, 0.0, 0.0,   1.0, 0.0, 0.0,  // v0-v3-v4-v5 right
-//   0.0, 1.0, 0.0,   0.0, 1.0, 0.0,   0.0, 1.0, 0.0,   0.0, 1.0, 0.0,  // v0-v5-v6-v1 up
-//  -1.0, 0.0, 0.0,  -1.0, 0.0, 0.0,  -1.0, 0.0, 0.0,  -1.0, 0.0, 0.0,  // v1-v6-v7-v2 left
-//   0.0,-1.0, 0.0,   0.0,-1.0, 0.0,   0.0,-1.0, 0.0,   0.0,-1.0, 0.0,  // v7-v4-v3-v2 down
-//   0.0, 0.0,-1.0,   0.0, 0.0,-1.0,   0.0, 0.0,-1.0,   0.0, 0.0,-1.0   // v4-v7-v6-v5 back
-// ]);
 let mod = GenerateModel(1.8, 0.8, 100);
 let vertices = mod.vertices;
 let normals = mod.normals;
 let colors = mod.color;
 let texCs = mod.texCoords;
 
+shaderProgram.a_Position= gl.getAttribLocation(shaderProgram, "a_Position");
 var vBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
 gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
-gl.vertexAttribPointer(attrloc, 3, gl.FLOAT, false, 0, 0);
-gl.enableVertexAttribArray(attrloc);
-
-// var vBuffer = gl.createBuffer();
-// gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);   // NOTE:
-// gl.bufferData(gl.ARRAY_BUFFER, colors, gl.STATIC_DRAW);
-// gl.vertexAttribPointer(coloc, 3, gl.FLOAT, false, 0, 0);
-// gl.enableVertexAttribArray(coloc);
+gl.vertexAttribPointer(shaderProgram.a_Position, 3, gl.FLOAT, false, 0, 0);
+gl.enableVertexAttribArray(shaderProgram.a_Position);
 
 var vBuffer = gl.createBuffer();
-let normLoc = gl.getAttribLocation(shaderProgram, "a_Normal");
+shaderProgram.a_Normal = gl.getAttribLocation(shaderProgram, "a_Normal");
 gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);   // NOTE:
 gl.bufferData(gl.ARRAY_BUFFER, normals, gl.STATIC_DRAW);
-gl.vertexAttribPointer(normLoc, 3, gl.FLOAT, false, 0, 0);
-gl.enableVertexAttribArray(normLoc);
+gl.vertexAttribPointer(shaderProgram.a_Normal, 3, gl.FLOAT, false, 0, 0);
+gl.enableVertexAttribArray(shaderProgram.a_Normal);
 
+shaderProgram.a_texCoord= gl.getAttribLocation(shaderProgram, "a_texCoord");
 var vBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);   // NOTE:
 gl.bufferData(gl.ARRAY_BUFFER, texCs, gl.STATIC_DRAW);
-gl.vertexAttribPointer(texLoc, 2, gl.FLOAT, false, 0, 0);
-gl.enableVertexAttribArray(texLoc);
+gl.vertexAttribPointer(shaderProgram.a_texCoord, 2, gl.FLOAT, false, 0, 0);
+gl.enableVertexAttribArray(shaderProgram.a_texCoord);
 
 // Vertex remap index
 let vmapBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, vmapBuffer);
-// let vmapData = new Uint8Array([
-//     0, 1, 2,   0, 2, 3,    // front
-//     4, 5, 6,   4, 6, 7,    // right
-//     8, 9,10,   8,10,11,    // up
-//    12,13,14,  12,14,15,    // left
-//    16,17,18,  16,18,19,    // down
-//    20,21,22,  20,22,23     // back
-// ]);
+
 let vmapData = mod.map;
 
 
