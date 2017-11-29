@@ -176,7 +176,8 @@ image.onload = () => {
     // Sending data
     gl.uniform1i(textureLoc, 0);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, vmapData, gl.STATIC_DRAW);
-    move();
+    gl.drawElements(gl.TRIANGLES, mod.map.length, gl.UNSIGNED_BYTE, 0); // Render
+
 };
 
 let last_time = Date.now();
@@ -233,9 +234,9 @@ function GenerateModel(height, radius, sagment) {
         col.push(1.0, 1.0, 1.0);
         col.push(1.0, 1.0, 1.0);
 
-        tex.push(0.0, 0.0);
-        tex.push(0.0, 0.0);
-        tex.push(0.0, 0.0);
+        tex.push(a[0]/height-0.5, a[2]/height-0.5);
+        tex.push(b[0]/height-0.5, b[2]/height-0.5);
+        tex.push(c[0]/height-0.5, c[2]/height-0.5);
 
     }
     // middle
@@ -299,9 +300,9 @@ function GenerateModel(height, radius, sagment) {
         col.push(1.0, 1.0, 1.0);
         col.push(1.0, 1.0, 1.0);
 
-        tex.push(0.0, 0.0);
-        tex.push(0.0, 0.0);
-        tex.push(0.0, 0.0);
+        tex.push(a[0]/height-0.5, a[2]/height-0.5);
+        tex.push(b[0]/height-0.5, b[2]/height-0.5);
+        tex.push(c[0]/height-0.5, c[2]/height-0.5);
     }
     for(let i = 0; i < vet.length/3; i++)
         index.push(i);
