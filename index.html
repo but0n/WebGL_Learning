@@ -11,9 +11,9 @@
         <canvas class="ctx" width="720px" height="720px" onclick="move()"></canvas>
 
         <script id="Shader-vs" type="x-shader/x-vertex">
-            attribute vec3 pos;         // 每个顶点的坐标
-            attribute vec3 color;       // 每个顶点的颜色
-            attribute vec4 a_normal;    // 每个顶点的法线
+            attribute vec3 a_Position;         // 每个顶点的坐标
+            attribute vec3 a_Color;       // 每个顶点的颜色
+            attribute vec4 a_Normal;    // 每个顶点的法线
 
             uniform mat4 u_ModelMatrix; // Current frame const 模型矩阵
             uniform mat4 u_ViewMatrix;  // Current frame const 视图矩阵
@@ -25,11 +25,11 @@
 
             varying vec4 v_color;       // 每个片元的固有色
             void main () {
-                gl_Position = u_ProjeMatrix * u_ViewMatrix * u_ModelMatrix * vec4(pos, 1.0);
+                gl_Position = u_ProjeMatrix * u_ViewMatrix * u_ModelMatrix * vec4(a_Position, 1.0);
 
-                v_pos = vec3(u_ModelMatrix * vec4(pos, 1.0));   // 每个片元的世界坐标
-                v_normal = normalize(vec3(u_normalMatrix * a_normal));  // 每个片元的法线
-                v_color = vec4(color, 1.0);     // 每个片元的固有色
+                v_pos = vec3(u_ModelMatrix * vec4(a_Position, 1.0));   // 每个片元的世界坐标
+                v_normal = normalize(vec3(u_normalMatrix * a_Normal));  // 每个片元的法线
+                v_color = vec4(a_Color, 1.0);     // 每个片元的固有色
             }
         </script>
         <script id="Shader-fs" type="x-shader/x-fragment">
