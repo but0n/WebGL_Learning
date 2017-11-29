@@ -61,7 +61,7 @@ let texLoc = gl.getAttribLocation(shaderProgram, "a_texCoord");
 //   0.0,-1.0, 0.0,   0.0,-1.0, 0.0,   0.0,-1.0, 0.0,   0.0,-1.0, 0.0,  // v7-v4-v3-v2 down
 //   0.0, 0.0,-1.0,   0.0, 0.0,-1.0,   0.0, 0.0,-1.0,   0.0, 0.0,-1.0   // v4-v7-v6-v5 back
 // ]);
-let mod = GenerateModel(1.8, 0.8, 20);
+let mod = GenerateModel(1.8, 0.8, 100);
 let vertices = mod.vertices;
 let normals = mod.normals;
 let colors = mod.color;
@@ -156,6 +156,7 @@ gl.uniform3f(ambLoc, 0.2, 0.2, 0.2);
 
 gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_COLOR_BIT);
 
+gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, vmapData, gl.STATIC_DRAW);
 
 
 
@@ -175,8 +176,7 @@ image.onload = () => {
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
     // Sending data
     gl.uniform1i(textureLoc, 0);
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, vmapData, gl.STATIC_DRAW);
-    gl.drawElements(gl.TRIANGLES, mod.map.length, gl.UNSIGNED_BYTE, 0); // Render
+    gl.drawElements(gl.TRIANGLES, mod.map.length, gl.UNSIGNED_SHORT, 0); // Render
 
 };
 
@@ -195,7 +195,7 @@ let move = () => {
     nm.transpose();
     gl.uniformMatrix4fv(nmLoc, false, nm.elements);
 
-    gl.drawElements(gl.TRIANGLES, mod.map.length, gl.UNSIGNED_BYTE, 0); // Render
+    gl.drawElements(gl.TRIANGLES, mod.map.length, gl.UNSIGNED_SHORT, 0); // Render
 
     console.log('FPS:'+Math.floor(1000/d));
 
@@ -309,7 +309,7 @@ function GenerateModel(height, radius, sagment) {
 
     return {
         vertices: new Float32Array(vet),
-        map: new Uint8Array(index),
+        map: new Uint16Array(index),
         color: new Float32Array(col),
         texCoords: new Float32Array(tex),
         normals: new Float32Array(nor)
