@@ -28,7 +28,8 @@ gl.linkProgram(shaderProgram);
 gl.useProgram(shaderProgram);
 
 let attrloc = gl.getAttribLocation(shaderProgram, "a_Position");
-let coloc = gl.getAttribLocation(shaderProgram, "a_Color");
+// let coloc = gl.getAttribLocation(shaderProgram, "a_Color");
+let texLoc = gl.getAttribLocation(shaderProgram, "a_texCoord");
 
 
 
@@ -64,6 +65,7 @@ let mod = GenerateModel(1.8, 0.8, 20);
 let vertices = mod.vertices;
 let normals = mod.normals;
 let colors = mod.color;
+let texCs = mod.texCoords;
 
 var vBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
@@ -71,11 +73,11 @@ gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
 gl.vertexAttribPointer(attrloc, 3, gl.FLOAT, false, 0, 0);
 gl.enableVertexAttribArray(attrloc);
 
-var vBuffer = gl.createBuffer();
-gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);   // NOTE:
-gl.bufferData(gl.ARRAY_BUFFER, colors, gl.STATIC_DRAW);
-gl.vertexAttribPointer(coloc, 3, gl.FLOAT, false, 0, 0);
-gl.enableVertexAttribArray(coloc);
+// var vBuffer = gl.createBuffer();
+// gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);   // NOTE:
+// gl.bufferData(gl.ARRAY_BUFFER, colors, gl.STATIC_DRAW);
+// gl.vertexAttribPointer(coloc, 3, gl.FLOAT, false, 0, 0);
+// gl.enableVertexAttribArray(coloc);
 
 var vBuffer = gl.createBuffer();
 let normLoc = gl.getAttribLocation(shaderProgram, "a_Normal");
@@ -83,6 +85,12 @@ gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);   // NOTE:
 gl.bufferData(gl.ARRAY_BUFFER, normals, gl.STATIC_DRAW);
 gl.vertexAttribPointer(normLoc, 3, gl.FLOAT, false, 0, 0);
 gl.enableVertexAttribArray(normLoc);
+
+var vBuffer = gl.createBuffer();
+gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);   // NOTE:
+gl.bufferData(gl.ARRAY_BUFFER, texCs, gl.STATIC_DRAW);
+gl.vertexAttribPointer(texLoc, 2, gl.FLOAT, false, 0, 0);
+gl.enableVertexAttribArray(texLoc);
 
 // Vertex remap index
 let vmapBuffer = gl.createBuffer();
@@ -96,7 +104,6 @@ gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, vmapBuffer);
 //    20,21,22,  20,22,23     // back
 // ]);
 let vmapData = mod.map;
-gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, vmapData, gl.STATIC_DRAW);
 
 
 
@@ -148,14 +155,13 @@ let ambLoc = gl.getUniformLocation(shaderProgram, "u_ambientLight");
 gl.uniform3f(ambLoc, 0.2, 0.2, 0.2);
 
 gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_COLOR_BIT);
-gl.drawElements(gl.TRIANGLES, mod.map.length, gl.UNSIGNED_BYTE, 0);
 
 
 
 
 // Textrue
 let texture = gl.createTexture(); // Create Textrue
-let textureLoc = gl.getUniformLocation(shaderProgram, 'u_texture');
+let textureLoc = gl.getUniformLocation(shaderProgram, 'u_sampler');
 // Get location
 
 let image = new Image();
@@ -169,6 +175,8 @@ image.onload = () => {
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
     // Sending data
     gl.uniform1i(textureLoc, 0);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, vmapData, gl.STATIC_DRAW);
+    move();
 };
 
 let last_time = Date.now();
@@ -206,6 +214,7 @@ function GenerateModel(height, radius, sagment) {
     let index = [];
     let nor = [];
     let col = [];
+    let tex = [];
     let n, a, b, c;
 
     // top
@@ -223,6 +232,11 @@ function GenerateModel(height, radius, sagment) {
         col.push(1.0, 1.0, 1.0);
         col.push(1.0, 1.0, 1.0);
         col.push(1.0, 1.0, 1.0);
+
+        tex.push(0.0, 0.0);
+        tex.push(0.0, 0.0);
+        tex.push(0.0, 0.0);
+
     }
     // middle
     for(let i = 0; i < sagment; i++) {
@@ -237,6 +251,11 @@ function GenerateModel(height, radius, sagment) {
         nor.push(n[0], n[1], n[2]);
         nor.push(n[0], n[1], n[2]);
 
+        tex.push(a[0]/height, a[1]/height);
+        tex.push(b[0]/height, b[1]/height);
+        tex.push(c[0]/height, c[1]/height);
+
+
         a = [radius*this.cos(del*(i+1)), height, radius*this.sin(del*(i+1))];
         b = [radius*this.cos(del*(i+1)), 0.0, radius*this.sin(del*(i+1))];
         c = [radius*this.cos(del*i), 0.0, radius*this.sin(del*i)];
@@ -248,12 +267,18 @@ function GenerateModel(height, radius, sagment) {
         nor.push(n[0], n[1], n[2]);
         nor.push(n[0], n[1], n[2]);
 
+        tex.push(a[0]/height, a[1]/height);
+        tex.push(b[0]/height, b[1]/height);
+        tex.push(c[0]/height, c[1]/height);
+
+
         col.push(1.0, 1.0, 1.0);
         col.push(1.0, 1.0, 1.0);
         col.push(1.0, 1.0, 1.0);
         col.push(1.0, 1.0, 1.0);
         col.push(1.0, 1.0, 1.0);
         col.push(1.0, 1.0, 1.0);
+
 
     }
     // bottom
@@ -273,6 +298,10 @@ function GenerateModel(height, radius, sagment) {
         col.push(1.0, 1.0, 1.0);
         col.push(1.0, 1.0, 1.0);
         col.push(1.0, 1.0, 1.0);
+
+        tex.push(0.0, 0.0);
+        tex.push(0.0, 0.0);
+        tex.push(0.0, 0.0);
     }
     for(let i = 0; i < vet.length/3; i++)
         index.push(i);
@@ -281,6 +310,7 @@ function GenerateModel(height, radius, sagment) {
         vertices: new Float32Array(vet),
         map: new Uint8Array(index),
         color: new Float32Array(col),
+        texCoords: new Float32Array(tex),
         normals: new Float32Array(nor)
     };
 }
