@@ -28,31 +28,37 @@ gl.linkProgram(shaderProgram);
 gl.useProgram(shaderProgram);
 
 // let coloc = gl.getAttribLocation(shaderProgram, "a_Color");
+// @GENERATE
 
-let mod = GenerateModel(1.8, 0.8, 100);
-let vertices = mod.vertices;
-let normals = mod.normals;
-let colors = mod.color;
-let texCs = mod.texCoords;
+let sun = GenerateModel(1.2, 0.8, 20, 0);
+let earth = GenerateModel(0.8, 0.4, 20, sun.length);
+earth.offset = sun.length *2;
+let moon = GenerateModel(0.4, 0.2, 20, sun.length + earth.length);
+moon.offset = (sun.length + earth.length) *2;
 
+// earth.offset = sun.length;
+// moon.offset = sun.length+earth.length;
+
+
+// NOTE: Attributes
 shaderProgram.a_Position= gl.getAttribLocation(shaderProgram, "a_Position");
 var vBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
-gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(sun.vertices.concat(earth.vertices).concat(moon.vertices)), gl.STATIC_DRAW);
 gl.vertexAttribPointer(shaderProgram.a_Position, 3, gl.FLOAT, false, 0, 0);
 gl.enableVertexAttribArray(shaderProgram.a_Position);
 
 var vBuffer = gl.createBuffer();
 shaderProgram.a_Normal = gl.getAttribLocation(shaderProgram, "a_Normal");
 gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);   // NOTE:
-gl.bufferData(gl.ARRAY_BUFFER, normals, gl.STATIC_DRAW);
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(sun.normals.concat(earth.normals).concat(moon.normals)), gl.STATIC_DRAW);
 gl.vertexAttribPointer(shaderProgram.a_Normal, 3, gl.FLOAT, false, 0, 0);
 gl.enableVertexAttribArray(shaderProgram.a_Normal);
 
 shaderProgram.a_texCoord= gl.getAttribLocation(shaderProgram, "a_texCoord");
 var vBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);   // NOTE:
-gl.bufferData(gl.ARRAY_BUFFER, texCs, gl.STATIC_DRAW);
+gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(sun.texCoords.concat(earth.texCoords).concat(moon.texCoords)), gl.STATIC_DRAW);
 gl.vertexAttribPointer(shaderProgram.a_texCoord, 2, gl.FLOAT, false, 0, 0);
 gl.enableVertexAttribArray(shaderProgram.a_texCoord);
 
@@ -60,7 +66,6 @@ gl.enableVertexAttribArray(shaderProgram.a_texCoord);
 let vmapBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, vmapBuffer);
 
-let vmapData = mod.map;
 
 
 
@@ -71,56 +76,67 @@ gl.enable(gl.DEPTH_TEST);
 // gl.enable(gl.POLYGON_OFFSET_FILL);
 gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_COLOR_BIT);
 
+// NOTE: Matrix                                     NOTE
+
 let model = new Matrix4();
-// model.rotate(-45, 1, 0, 0);
+// model.translate(1, 0, 0);
+// model.rotate(-45, 0, 1, 0);
+
 // model.rotate(-45, 0, 0, 1);
 
 let view = new Matrix4();
 // view.setLookAt(0, 0, 5, 0, 0, -100, 0, 1, 0);
-view.setLookAt(3, 3, 7, 0, 0, 0, 0, 1, 0);
+view.setLookAt(0, 19, 10, 0, 0, 0, 0, 1, 0);
 
 
 let proje = new Matrix4();
 proje.setPerspective(30, 1, 1, 100);
 
-let modelLocation = gl.getUniformLocation(shaderProgram, 'u_ModelMatrix');
-let viewLocation = gl.getUniformLocation(shaderProgram, 'u_ViewMatrix');
-let projeLocation = gl.getUniformLocation(shaderProgram, 'u_ProjeMatrix');
-gl.uniformMatrix4fv(modelLocation, false, model.elements);
-gl.uniformMatrix4fv(viewLocation, false, view.elements);
-gl.uniformMatrix4fv(projeLocation, false, proje.elements);
+let mvp = new Matrix4();
+mvp.set(proje).multiply(view);
+
+shaderProgram.u_ModelMatrix = gl.getUniformLocation(shaderProgram, 'u_ModelMatrix');
+// shaderProgram.u_ViewMatrix = gl.getUniformLocation(shaderProgram, 'u_ViewMatrix');
+// shaderProgram.u_ProjeMatrix = gl.getUniformLocation(shaderProgram, 'u_ProjeMatrix');
+shaderProgram.u_mvpMatrix = gl.getUniformLocation(shaderProgram, 'u_mvpMatrix');
+// gl.uniformMatrix4fv(shaderProgram.u_ModelMatrix, false, model.elements);
+// gl.uniformMatrix4fv(shaderProgram.u_ViewMatrix, false, view.elements);
+// gl.uniformMatrix4fv(shaderProgram.u_ProjeMatrix, false, proje.elements);
+gl.uniformMatrix4fv(shaderProgram.u_mvpMatrix, false, mvp.elements);
 // Light uniform
-let lightColorLoc = gl.getUniformLocation(shaderProgram, "u_lightColor");
-gl.uniform3f(lightColorLoc, 1.0, 1.0, 1.0);
-let lightDirectionLoc = gl.getUniformLocation(shaderProgram, "u_lightDirection");
+shaderProgram.u_lightColor = gl.getUniformLocation(shaderProgram, "u_lightColor");
+gl.uniform3f(shaderProgram.u_lightColor, 1.0, 1.0, 1.0);
+shaderProgram.u_lightDirection = gl.getUniformLocation(shaderProgram, "u_lightDirection");
 let ld = new Vector3([0.5, 3.0, 4.0]);
 ld.normalize();
-gl.uniform3fv(lightDirectionLoc, ld.elements);
+gl.uniform3fv(shaderProgram.u_lightDirection, ld.elements);
 
 // Normal Matrix
 let nm = new Matrix4();
-let nmLoc = gl.getUniformLocation(shaderProgram, "u_normalMatrix");
+shaderProgram.u_normalMatrix = gl.getUniformLocation(shaderProgram, "u_normalMatrix");
 nm.setInverseOf(model);
 nm.transpose();
-gl.uniformMatrix4fv(nmLoc, false, nm.elements);
+gl.uniformMatrix4fv(shaderProgram.u_normalMatrix, false, nm.elements);
 
 // Spot light
-let lposLoc = gl.getUniformLocation(shaderProgram, 'u_lightPosition');
-gl.uniform3f(lposLoc, 0.0, 3.0, 4.0);
+shaderProgram.u_lightPosition = gl.getUniformLocation(shaderProgram, 'u_lightPosition');
+gl.uniform3f(shaderProgram.u_lightPosition, 0.0, 0.0, 0.0);
 
-let ambLoc = gl.getUniformLocation(shaderProgram, "u_ambientLight");
-gl.uniform3f(ambLoc, 0.2, 0.2, 0.2);
+shaderProgram.u_ambientLight = gl.getUniformLocation(shaderProgram, "u_ambientLight");
+gl.uniform3f(shaderProgram.u_ambientLight, 0.5, 0.5, 0.9);
 
 gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_COLOR_BIT);
 
-gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, vmapData, gl.STATIC_DRAW);
+gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(sun.map.concat(earth.map).concat(moon.map)), gl.STATIC_DRAW);
 
 
 
 // Textrue
 let texture = gl.createTexture(); // Create Textrue
-let textureLoc = gl.getUniformLocation(shaderProgram, 'u_sampler');
+shaderProgram.u_sampler = gl.getUniformLocation(shaderProgram, 'u_sampler');
 // Get location
+
+
 
 let image = new Image();
 image.src = './hello.png';
@@ -132,8 +148,20 @@ image.onload = () => {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
     // Sending data
-    gl.uniform1i(textureLoc, 0);
-    gl.drawElements(gl.TRIANGLES, mod.map.length, gl.UNSIGNED_SHORT, 0); // Render
+    gl.uniform1i(shaderProgram.u_sampler, 0);
+
+    // EarthMatrix.rotate(30, 0, 1, 0);
+    EarthMatrix.translate(4.0, 0.0, 0.0);
+
+    MoonMatrix.translate(1.0, 0.0, 0.0);
+    // MoonMatrix.scale(0.4, 0.4, 0.4);
+
+
+    drawSun(SunMatrix);
+    drawEarth(EarthMatrix);
+    drawMoon(MoonMatrix);
+    move();
+
 
 };
 
@@ -141,18 +169,22 @@ let last_time = Date.now();
 let move = () => {
     let d = Date.now() - last_time;
     last_time = Date.now();
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_COLOR_BIT);
-    model.rotate(-60/1000*d, 0, 1, 0);
-    model.rotate(-60/1000*d, 1, 0, 0);
-    // matrix.translate(0, 0, -1/1000*d);
-    gl.uniformMatrix4fv(modelLocation, false, model.elements);
-    gl.uniformMatrix4fv(viewLocation, false, view.elements);
-    gl.uniformMatrix4fv(projeLocation, false, proje.elements);
-    nm.setInverseOf(model);
-    nm.transpose();
-    gl.uniformMatrix4fv(nmLoc, false, nm.elements);
+    // gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_COLOR_BIT);
 
-    gl.drawElements(gl.TRIANGLES, mod.map.length, gl.UNSIGNED_SHORT, 0); // Render
+    // EarthMatrix.rotate(-60/1000*d, 0, 1, 0);
+
+    let tmp = new Matrix4();
+    SunMatrix.rotate(-12/1000*d, 0, 1, 0);
+    EarthMatrix.rotate(-198/1000*d, 0, 1, 0);
+
+    tmp.set(SunMatrix);
+    drawSun(SunMatrix);
+
+    drawEarth(tmp.multiply(EarthMatrix));
+
+
+    drawMoon(tmp.multiply(MoonMatrix));
+
 
     console.log('FPS:'+Math.floor(1000/d));
 
@@ -160,9 +192,7 @@ let move = () => {
     requestAnimationFrame(move);
 }
 // move();
-
-
-function GenerateModel(height, radius, sagment) {
+function GenerateModel(height, radius, sagment, offset) {
     this.r = (c) => Math.PI*c/180.0
     this.cos = (c) => Math.cos(this.r(c));
     this.sin = (c) => Math.sin(this.r(c));
@@ -262,15 +292,42 @@ function GenerateModel(height, radius, sagment) {
         tex.push(c[0]/height-0.5, c[2]/height-0.5);
     }
     for(let i = 0; i < vet.length/3; i++)
-        index.push(i);
+        index.push(i+offset);
 
     return {
-        vertices: new Float32Array(vet),
-        map: new Uint16Array(index),
-        color: new Float32Array(col),
-        texCoords: new Float32Array(tex),
-        normals: new Float32Array(nor)
+        vertices: vet,
+        map: index,
+        color: col,
+        texCoords: tex,
+        normals: nor,
+        length: index.length,
+        offset: 0
     };
+}
+
+let SunMatrix = new Matrix4();
+let drawSun = (a) => {
+    nm.setInverseOf(a);
+    nm.transpose();
+    gl.uniformMatrix4fv(shaderProgram.u_normalMatrix, false, nm.elements);
+    gl.uniformMatrix4fv(shaderProgram.u_ModelMatrix, false, a.elements);
+    gl.drawElements(gl.TRIANGLES, sun.length, gl.UNSIGNED_SHORT, sun.offset); // Render
+}
+let EarthMatrix = new Matrix4();
+let drawEarth = (a) => {
+    nm.setInverseOf(a);
+    nm.transpose();
+    gl.uniformMatrix4fv(shaderProgram.u_normalMatrix, false, nm.elements);
+    gl.uniformMatrix4fv(shaderProgram.u_ModelMatrix, false, a.elements);
+    gl.drawElements(gl.TRIANGLES, earth.length, gl.UNSIGNED_SHORT, earth.offset); // Render
+}
+let MoonMatrix = new Matrix4();
+let drawMoon = (a) => {
+    nm.setInverseOf(a);
+    nm.transpose();
+    gl.uniformMatrix4fv(shaderProgram.u_normalMatrix, false, nm.elements);
+    gl.uniformMatrix4fv(shaderProgram.u_ModelMatrix, false, a.elements);
+    gl.drawElements(gl.TRIANGLES, moon.length, gl.UNSIGNED_SHORT, moon.offset); // Render
 }
 
 function cross(a, b) {
