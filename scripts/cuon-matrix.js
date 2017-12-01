@@ -1,6 +1,5 @@
-<<<<<<< HEAD
 // cuon-matrix.js (c) 2012 kanda and matsuda
-/** 
+/**
  * This is a class treating 4x4 matrix.
  * This class contains the function that is equivalent to OpenGL matrix stack.
  * The matrix after conversion is calculated by multiplying a conversion matrix from the right.
@@ -54,7 +53,7 @@ Matrix4.prototype.set = function(src) {
   if (s === d) {
     return;
   }
-    
+
   for (i = 0; i < 16; ++i) {
     d[i] = s[i];
   }
@@ -69,12 +68,12 @@ Matrix4.prototype.set = function(src) {
  */
 Matrix4.prototype.concat = function(other) {
   var i, e, a, b, ai0, ai1, ai2, ai3;
-  
+
   // Calculate e = a * b
   e = this.elements;
   a = this.elements;
   b = other.elements;
-  
+
   // If e equals b, copy b to temporary matrix.
   if (e === b) {
     b = new Float32Array(16);
@@ -82,7 +81,7 @@ Matrix4.prototype.concat = function(other) {
       b[i] = e[i];
     }
   }
-  
+
   for (i = 0; i < 4; i++) {
     ai0=a[i];  ai1=a[i+4];  ai2=a[i+8];  ai3=a[i+12];
     e[i]    = ai0 * b[0]  + ai1 * b[1]  + ai2 * b[2]  + ai3 * b[3];
@@ -90,7 +89,7 @@ Matrix4.prototype.concat = function(other) {
     e[i+8]  = ai0 * b[8]  + ai1 * b[9]  + ai2 * b[10] + ai3 * b[11];
     e[i+12] = ai0 * b[12] + ai1 * b[13] + ai2 * b[14] + ai3 * b[15];
   }
-  
+
   return this;
 };
 Matrix4.prototype.multiply = Matrix4.prototype.concat;
@@ -705,7 +704,7 @@ var Vector3 = function(opt_src) {
   var v = new Float32Array(3);
   if (opt_src && typeof opt_src === 'object') {
     v[0] = opt_src[0]; v[1] = opt_src[1]; v[2] = opt_src[2];
-  } 
+  }
   this.elements = v;
 }
 
@@ -737,12 +736,12 @@ var Vector4 = function(opt_src) {
   var v = new Float32Array(4);
   if (opt_src && typeof opt_src === 'object') {
     v[0] = opt_src[0]; v[1] = opt_src[1]; v[2] = opt_src[2]; v[3] = opt_src[3];
-  } 
+  }
   this.elements = v;
 }
 =======
 // cuon-matrix.js (c) 2012 kanda and matsuda
-/** 
+/**
  * This is a class treating 4x4 matrix.
  * This class contains the function that is equivalent to OpenGL matrix stack.
  * The matrix after conversion is calculated by multiplying a conversion matrix from the right.
@@ -796,7 +795,7 @@ Matrix4.prototype.set = function(src) {
   if (s === d) {
     return;
   }
-    
+
   for (i = 0; i < 16; ++i) {
     d[i] = s[i];
   }
@@ -811,12 +810,12 @@ Matrix4.prototype.set = function(src) {
  */
 Matrix4.prototype.concat = function(other) {
   var i, e, a, b, ai0, ai1, ai2, ai3;
-  
+
   // Calculate e = a * b
   e = this.elements;
   a = this.elements;
   b = other.elements;
-  
+
   // If e equals b, copy b to temporary matrix.
   if (e === b) {
     b = new Float32Array(16);
@@ -824,7 +823,7 @@ Matrix4.prototype.concat = function(other) {
       b[i] = e[i];
     }
   }
-  
+
   for (i = 0; i < 4; i++) {
     ai0=a[i];  ai1=a[i+4];  ai2=a[i+8];  ai3=a[i+12];
     e[i]    = ai0 * b[0]  + ai1 * b[1]  + ai2 * b[2]  + ai3 * b[3];
@@ -832,7 +831,7 @@ Matrix4.prototype.concat = function(other) {
     e[i+8]  = ai0 * b[8]  + ai1 * b[9]  + ai2 * b[10] + ai3 * b[11];
     e[i+12] = ai0 * b[12] + ai1 * b[13] + ai2 * b[14] + ai3 * b[15];
   }
-  
+
   return this;
 };
 Matrix4.prototype.multiply = Matrix4.prototype.concat;
@@ -1447,7 +1446,7 @@ var Vector3 = function(opt_src) {
   var v = new Float32Array(3);
   if (opt_src && typeof opt_src === 'object') {
     v[0] = opt_src[0]; v[1] = opt_src[1]; v[2] = opt_src[2];
-  } 
+  }
   this.elements = v;
 }
 
@@ -1479,7 +1478,7 @@ var Vector4 = function(opt_src) {
   var v = new Float32Array(4);
   if (opt_src && typeof opt_src === 'object') {
     v[0] = opt_src[0]; v[1] = opt_src[1]; v[2] = opt_src[2]; v[3] = opt_src[3];
-  } 
+  }
   this.elements = v;
 }
 >>>>>>> bd21059a3ad76a2946e1b9cc0e84af4a52fad970
