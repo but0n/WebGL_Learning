@@ -739,4 +739,3 @@ var Vector4 = function(opt_src) {
   }
   this.elements = v;
 }
->>>>>>> bd21059a3ad76a2946e1b9cc0e84af4a52fad970
