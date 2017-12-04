@@ -70,7 +70,7 @@ let model = new Matrix4();
 
 let view = new Matrix4();
 // view.setLookAt(0, 0, 5, 0, 0, -100, 0, 1, 0);
-view.setLookAt(2, 3, 4, 0, 1, 0, 0, 1, 0);
+view.setLookAt(4, 3, 2, 0, 1, 0, 0, 1, 0);
 
 
 let proje = new Matrix4();
@@ -220,7 +220,7 @@ let move = () => {
 
     console.log('FPS:'+Math.floor(1000/d));
 
-    // bloom();
+    bloom();
 
     requestAnimationFrame(move);
 }
