@@ -8,7 +8,7 @@
     </head>
     <body>
 
-        <canvas class="ctx" width="720px" height="720px" onclick="move()"></canvas>
+        <canvas class="ctx" width="512px" height="512px" onclick="move()"></canvas>
 
         <script id="Shader-vs" type="x-shader/x-vertex">
             attribute vec3 a_Position;         // 每个顶点的坐标
@@ -55,6 +55,47 @@
                 gl_FragColor = vec4(diffuse + ambient, color.a);  // 漫反射 + 全局光
             }
         </script>
+<!-- Channel 1 -->
+        <script id="Shader-ch1-vs" type="x-shader/x-vertex">
+            attribute vec3 a_Position;         // 每个顶点的坐标
+            attribute vec2 a_texCoord;
+
+
+            varying vec2 v_texCoord;    // 每个片元的纹素坐标
+            void main () {
+                gl_Position = vec4(a_Position, 1.0);
+                v_texCoord = a_texCoord;
+            }
+        </script>
+        <script id="Shader-ch1-fs" type="x-shader/x-fragment">
+            precision mediump float;
+
+            uniform sampler2D u_sampler;
+            varying vec2 v_texCoord;    // 每个片元的纹素坐标
+            // varying vec4 v_color;           // 每个片元的固有色
+            #define DISTANCE  0.001
+            #define INTENCITY 1.8
+            void main () {
+                vec4 sum = vec4(0);
+                vec2 texcoord = vec2(v_texCoord);
+                for(int i = -3; i < 3; i++) {
+                    for(int j = -3; j < 3; j++) {
+                        sum += texture2D(u_sampler, texcoord + vec2(j, i) * DISTANCE) * INTENCITY;
+                    }
+                }
+                if(texture2D(u_sampler, texcoord).r < 0.3) {
+                    gl_FragColor = sum*sum*0.012 + texture2D(u_sampler, texcoord);
+                } else {
+                    if(texture2D(u_sampler, texcoord).r < 0.5) {
+                        gl_FragColor = sum*sum*0.075 + texture2D(u_sampler, texcoord);
+                    } else {
+                        gl_FragColor = sum*sum*0.09 + texture2D(u_sampler, texcoord);
+                    }
+                }
+
+            }
+        </script>
+
 
         <script src="scripts/cuon-matrix.js"></script>
         <!-- <script src="scripts/brs-matrix.js"></script> -->

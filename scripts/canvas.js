@@ -18,6 +18,14 @@ function getShader(e, GL_ctx) {
         (console.log( GL_ctx.getShaderInfoLog(shader)));
 }
 
+function attributeBuffer(pointer, data, n, type) {
+    var buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+    gl.vertexAttribPointer(pointer, n, type, false, 0, 0);
+    gl.enableVertexAttribArray(pointer);
+}
+
 let shaderProgram = gl.createProgram();
 
 
@@ -29,38 +37,23 @@ gl.useProgram(shaderProgram);
 
 // let coloc = gl.getAttribLocation(shaderProgram, "a_Color");
 
-let mod = GenerateModel(1.8, 0.8, 200);
+let mod = GenerateModel(1.8, 0.8, 100);
 let vertices = mod.vertices;
 let normals = mod.normals;
 let colors = mod.color;
 let texCs = mod.texCoords;
 
 shaderProgram.a_Position= gl.getAttribLocation(shaderProgram, "a_Position");
-var vBuffer = gl.createBuffer();
-gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
-gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
-gl.vertexAttribPointer(shaderProgram.a_Position, 3, gl.FLOAT, false, 0, 0);
-gl.enableVertexAttribArray(shaderProgram.a_Position);
+attributeBuffer(shaderProgram.a_Position, vertices, 3, gl.FLOAT);
 
-var vBuffer = gl.createBuffer();
 shaderProgram.a_Normal = gl.getAttribLocation(shaderProgram, "a_Normal");
-gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);   // NOTE:
-gl.bufferData(gl.ARRAY_BUFFER, normals, gl.STATIC_DRAW);
-gl.vertexAttribPointer(shaderProgram.a_Normal, 3, gl.FLOAT, false, 0, 0);
-gl.enableVertexAttribArray(shaderProgram.a_Normal);
+attributeBuffer(shaderProgram.a_Normal, normals, 3, gl.FLOAT);
 
 shaderProgram.a_texCoord= gl.getAttribLocation(shaderProgram, "a_texCoord");
-var vBuffer = gl.createBuffer();
-gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);   // NOTE:
-gl.bufferData(gl.ARRAY_BUFFER, texCs, gl.STATIC_DRAW);
-gl.vertexAttribPointer(shaderProgram.a_texCoord, 2, gl.FLOAT, false, 0, 0);
-gl.enableVertexAttribArray(shaderProgram.a_texCoord);
+attributeBuffer(shaderProgram.a_texCoord, texCs, 2, gl.FLOAT);
 
-// Vertex remap index
-let vmapBuffer = gl.createBuffer();
-gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, vmapBuffer);
 
-let vmapData = mod.map;
+
 
 
 
@@ -77,7 +70,7 @@ let model = new Matrix4();
 
 let view = new Matrix4();
 // view.setLookAt(0, 0, 5, 0, 0, -100, 0, 1, 0);
-view.setLookAt(3, 3, 7, 0, 0, 0, 0, 1, 0);
+view.setLookAt(2, 3, 4, 0, 1, 0, 0, 1, 0);
 
 
 let proje = new Matrix4();
@@ -109,11 +102,10 @@ let lposLoc = gl.getUniformLocation(shaderProgram, 'u_lightPosition');
 gl.uniform3f(lposLoc, 0.0, 3.0, 4.0);
 
 let ambLoc = gl.getUniformLocation(shaderProgram, "u_ambientLight");
-gl.uniform3f(ambLoc, 0.2, 0.2, 0.2);
+gl.uniform3f(ambLoc, 0.1, 0.1, 0.1);
 
 gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_COLOR_BIT);
 
-gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, vmapData, gl.STATIC_DRAW);
 
 // _=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=
 // Create Framebuffer NOTE
@@ -122,14 +114,15 @@ let fb = gl.createFramebuffer();
 // Create NOTE Texturebuffer NOTE to store color data
 let textureBuffer = gl.createTexture();
 gl.bindTexture(gl.TEXTURE_2D, textureBuffer);
-gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1024, 1024, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
-gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LIEARN);
+gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, 512, 512, 0, gl.RGB, gl.UNSIGNED_BYTE, null);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+// NOTE: Bug was a Typo!!! gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LIEARN);
 fb.texture = textureBuffer;
 
 // _=Create NOTE Renderbuffer NOTE to store depth data
 let depthBuffer = gl.createRenderbuffer();
 gl.bindRenderbuffer(gl.RENDERBUFFER, depthBuffer);
-gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, 1024, 1024);
+gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, 512, 512);
 
 // NOTE: Attach those
 gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
@@ -137,7 +130,21 @@ gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, tex
 gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, depthBuffer);
 // _=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=
 
-// Textrue
+// NOTE: Shader channel 1, render plane             CHANNEL1
+
+let shader1 = gl.createProgram();
+gl.attachShader(shader1, getShader('Shader-ch1-vs', gl));
+gl.attachShader(shader1, getShader('Shader-ch1-fs', gl));
+gl.linkProgram(shader1);
+shader1.a_Position = gl.getAttribLocation(shader1, "a_Position");
+shader1.a_texCoord = gl.getAttribLocation(shader1, "a_texCoord");
+shader1.u_sampler = gl.getUniformLocation(shader1, "u_sampler");
+
+
+// gl.useProgram(shader1);
+
+
+// Main Textrue
 let texture = gl.createTexture(); // Create Textrue
 let textureLoc = gl.getUniformLocation(shaderProgram, 'u_sampler');
 // Get location
@@ -147,25 +154,27 @@ image.src = './hello.png';
 image.onload = () => {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_COLOR_BIT);
 
-    // gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    // NOTE: Render to Framebuffer
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
     gl.activeTexture(gl.TEXTURE1);
     gl.bindTexture(gl.TEXTURE_2D, texture);
     // Configure
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
     // Sending data
     gl.uniform1i(textureLoc, 1);
+
+    gl.activeTexture(gl.TEXTURE1);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
+// Vertex remap index
+    let vmapBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, vmapBuffer);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, mod.map, gl.STATIC_DRAW);
     gl.drawElements(gl.TRIANGLES, mod.map.length, gl.UNSIGNED_SHORT, 0); // Render
     // move();
-    // NOTE: Toggle buffer
-    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, fb.texture);
-    gl.uniform1i(textureLoc, 0);
-
-    // gl.drawElements(gl.TRIANGLES, mod.map.length, gl.UNSIGNED_SHORT, 0); // Render
+// return;
+            // Effect - bloom
+    bloom();
 
 
 };
@@ -178,22 +187,76 @@ let move = () => {
     model.rotate(-60/1000*d, 0, 1, 0);
     model.rotate(-60/1000*d, 1, 0, 0);
     // matrix.translate(0, 0, -1/1000*d);
+
+
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_COLOR_BIT);
+    gl.useProgram(shaderProgram);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.activeTexture(gl.TEXTURE1);
+    attributeBuffer(shaderProgram.a_Position, vertices, 3, gl.FLOAT);
+
+    attributeBuffer(shaderProgram.a_Normal, normals, 3, gl.FLOAT);
+
+    attributeBuffer(shaderProgram.a_texCoord, texCs, 2, gl.FLOAT);
+
+    var vmapBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, vmapBuffer);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, mod.map, gl.STATIC_DRAW);
+    // Configure
+    // Sending data
+    gl.uniform1i(textureLoc, 1);
+
+    gl.activeTexture(gl.TEXTURE1);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
+// Vertex remap index
+
+
     gl.uniformMatrix4fv(modelLocation, false, model.elements);
-    // gl.uniformMatrix4fv(viewLocation, false, view.elements);
-    // gl.uniformMatrix4fv(projeLocation, false, proje.elements);
     nm.setInverseOf(model);
     nm.transpose();
     gl.uniformMatrix4fv(nmLoc, false, nm.elements);
 
     gl.drawElements(gl.TRIANGLES, mod.map.length, gl.UNSIGNED_SHORT, 0); // Render
 
-    // console.log('FPS:'+Math.floor(1000/d));
+    console.log('FPS:'+Math.floor(1000/d));
 
+    // bloom();
 
     requestAnimationFrame(move);
 }
 // move();
+function drawOrigin() {
 
+}
+function bloom() {
+    // NOTE: Toggle buffer, Disable Framebuffer, Render to canvas NOTE
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.useProgram(shader1);
+        // Active TXTURE Channel 0 -- which is a texture of last rendering
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, fb.texture);
+    gl.uniform1i(shader1.u_sampler, 0);
+    attributeBuffer(shader1.a_Position, new Float32Array([  // Vertex Postion
+        -1, 1, 0.0,
+        1, 1, 0.0,
+        1, -1, 0.0,
+        -1, -1, 0.0
+    ]), 3, gl.FLOAT);
+    attributeBuffer(shader1.a_texCoord, new Float32Array([  // TexCoord
+        0.0, 1.0,
+        1.0, 1.0,
+        1.0, 0.0,
+        0.0, 0.0
+    ]), 2, gl.FLOAT);
+    let buf = gl.createBuffer();
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array([
+        0, 1, 2,
+        0, 2, 3
+    ]), gl.STATIC_DRAW);
+
+    gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0); // Render
+}
 
 function GenerateModel(height, radius, sagment) {
     this.r = (c) => Math.PI*c/180.0
