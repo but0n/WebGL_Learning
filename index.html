@@ -90,7 +90,7 @@
                 for(int i = -RADIUS; i <= RADIUS; i++) {
                     int i2 = i*i;
                     for(int j = -RADIUS; j <= RADIUS; j++) {
-                        kernel[i+RADIUS] = exp(float(i2 + j * j)/ sigma2) / sigmap;
+                        kernel[i+RADIUS] = exp(-float(i2 + j * j)/ sigma2) / sigmap;
                     }
                 }
 
