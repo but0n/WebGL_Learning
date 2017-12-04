@@ -68,6 +68,7 @@
             }
         </script>
         <script id="Shader-ch1-fs" type="x-shader/x-fragment">
+            #define PI          3.1415926535898
             precision mediump float;
 
             uniform sampler2D u_sampler;
@@ -78,10 +79,21 @@
             // 采样半径
             #define RADIUS      4
             #define INTENCITY   0.8
-
+            float kernel[RADIUS*RADIUS*4];
             void main () {
                 vec4 sum = vec4(0);
                 vec2 texcoord = vec2(v_texCoord);
+
+                float sigma = float(RADIUS) / 3.0;
+                float sigma2 = 2.0 * sigma * sigma;
+                float sigmap = sigma2 * PI;
+                for(int i = -RADIUS; i <= RADIUS; i++) {
+                    int i2 = i*i;
+                    for(int j = -RADIUS; j <= RADIUS; j++) {
+                        kernel[i+RADIUS] = exp(float(i2 + j * j)/ sigma2) / sigmap;
+                    }
+                }
+
                 for(int i = -RADIUS; i < RADIUS; i++) {
                     for(int j = -RADIUS; j < RADIUS; j++) {
                         sum += texture2D(u_sampler, texcoord + vec2(j, i) * DISTANCE) * INTENCITY;
