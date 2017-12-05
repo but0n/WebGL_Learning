@@ -75,39 +75,46 @@
             varying vec2 v_texCoord;    // 每个片元的纹素坐标
             // varying vec4 v_color;           // 每个片元的固有色
             // 羽化 / 锐化
-            #define DISTANCE    0.003
+            #define DISTANCE        0.003
             // 采样半径
-            #define RADIUS      4
-            #define INTENCITY   0.8
-            float kernel[RADIUS*RADIUS*4];
-            void main () {
-                vec4 sum = vec4(0);
-                vec2 texcoord = vec2(v_texCoord);
+            #define RADIUS          10
+            #define INTENCITY       0.8
+            #define SAMPLE_AMOUNT   (RADIUS*2+1)*(RADIUS*2+1)
 
-                float sigma = float(RADIUS) / 3.0;
+            vec4 gaussBlur(sampler2D image, vec2 uv, vec2 resolution) {
+                vec4 color = vec4(0);
+                float sigma = float(RADIUS) / 2.0;
                 float sigma2 = 2.0 * sigma * sigma;
                 float sigmap = sigma2 * PI;
                 for(int i = -RADIUS; i <= RADIUS; i++) {
                     int i2 = i*i;
                     for(int j = -RADIUS; j <= RADIUS; j++) {
-                        kernel[i+RADIUS] = exp(-float(i2 + j * j)/ sigma2) / sigmap;
+                        float w = exp(-float(i2 + j * j)/ sigma2) / sigmap; // Current Weight
+                        color += texture2D(image, uv + vec2(j, i) / resolution) * w;
                     }
                 }
+                return color;
+            }
+            void main () {
+                vec2 texcoord = vec2(v_texCoord);
 
-                for(int i = -RADIUS; i < RADIUS; i++) {
-                    for(int j = -RADIUS; j < RADIUS; j++) {
-                        sum += texture2D(u_sampler, texcoord + vec2(j, i) * DISTANCE) * INTENCITY;
-                    }
-                }
-                if(texture2D(u_sampler, texcoord).r < 0.3) {
-                    gl_FragColor = sum*sum*0.012 + texture2D(u_sampler, texcoord);
-                } else {
-                    if(texture2D(u_sampler, texcoord).r < 0.5) {
-                        gl_FragColor = sum*sum*0.075 + texture2D(u_sampler, texcoord);
-                    } else {
-                        gl_FragColor = sum*sum*0.09 + texture2D(u_sampler, texcoord);
-                    }
-                }
+                gl_FragColor = gaussBlur(u_sampler, texcoord, vec2(720));
+                // gl_FragColor = texture2D(u_sampler, texcoord);
+
+                // for(int i = -RADIUS; i < RADIUS; i++) {
+                //     for(int j = -RADIUS; j < RADIUS; j++) {
+                //         sum += texture2D(u_sampler, texcoord + vec2(j, i) * DISTANCE) * INTENCITY;
+                //     }
+                // }
+                // if(texture2D(u_sampler, texcoord).r < 0.3) {
+                //     gl_FragColor = sum*sum*0.012 + texture2D(u_sampler, texcoord);
+                // } else {
+                //     if(texture2D(u_sampler, texcoord).r < 0.5) {
+                //         gl_FragColor = sum*sum*0.075 + texture2D(u_sampler, texcoord);
+                //     } else {
+                //         gl_FragColor = sum*sum*0.09 + texture2D(u_sampler, texcoord);
+                //     }
+                // }
 
             }
         </script>
