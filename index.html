@@ -74,7 +74,7 @@
             uniform sampler2D u_sampler;
             varying vec2 v_texCoord;    // 每个片元的纹素坐标
             // 采样半径
-            #define RADIUS          22
+            #define RADIUS          12
             #define INTENCITY       0.8
             #define SAMPLE_AMOUNT   (RADIUS*2+1)*(RADIUS*2+1)
 
@@ -87,7 +87,18 @@
                     int i2 = i*i;
                     for(int j = -RADIUS; j <= RADIUS; j++) {
                         float w = exp(-float(i2 + j * j)/ sigma2) / sigmap; // Current Weight
-                        color += texture2D(image, uv + vec2(j, i) / resolution) * w;
+                        vec2 p = uv + vec2(j, i) / resolution;
+                        if(p.x > 1.0) {
+                            p.x -= (p.x -1.0) * 2.0;
+                        } else if(p.x <= -1.0) {
+                            p.x += (-p.x - 1.0 ) * 2.0;
+                        }
+                        if(p.y > 1.0) {
+                            p.y -= (p.y -1.0) * 2.0;
+                        } else if(p.y <= -1.0) {
+                            p.y += (-p.y - 1.0 ) * 2.0;
+                        }
+                        color += texture2D(image, p) * w;
                     }
                 }
                 return color;
