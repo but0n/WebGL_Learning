@@ -305,9 +305,9 @@ function GenerateModel(height, radius, sagment) {
         nor.push(n[0], n[1], n[2]);
         nor.push(n[0], n[1], n[2]);
 
-        tex.push(a[0]/height, a[1]/height);
-        tex.push(b[0]/height, b[1]/height);
-        tex.push(c[0]/height, c[1]/height);
+        tex.push(i*0.01, a[1]/height);
+        tex.push(i*0.01, b[1]/height);
+        tex.push((i+1)*0.01, c[1]/height);
 
 
         a = [radius*this.cos(del*(i+1)), height, radius*this.sin(del*(i+1))];
@@ -321,9 +321,9 @@ function GenerateModel(height, radius, sagment) {
         nor.push(n[0], n[1], n[2]);
         nor.push(n[0], n[1], n[2]);
 
-        tex.push(a[0]/height, a[1]/height);
-        tex.push(b[0]/height, b[1]/height);
-        tex.push(c[0]/height, c[1]/height);
+        tex.push((i+1)*0.01, a[1]/height);
+        tex.push((i+1)*0.01, b[1]/height);
+        tex.push(i*0.01, c[1]/height);
 
 
         col.push(1.0, 1.0, 1.0);
