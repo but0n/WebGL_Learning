@@ -75,7 +75,7 @@
             varying vec2 v_texCoord;    // 每个片元的纹素坐标
             // 采样半径
             #define RADIUS          12
-            #define INTENCITY       0.8
+            #define INTENCITY       0.4
             #define SAMPLE_AMOUNT   (RADIUS*2+1)*(RADIUS*2+1)
 
             vec4 gaussBlur(sampler2D image, vec2 uv, vec2 resolution) {
