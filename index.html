@@ -74,7 +74,7 @@
             uniform sampler2D u_sampler;
             varying vec2 v_texCoord;    // 每个片元的纹素坐标
             // 采样半径
-            #define RADIUS          40
+            #define RADIUS          22
             #define INTENCITY       0.8
             #define SAMPLE_AMOUNT   (RADIUS*2+1)*(RADIUS*2+1)
 
@@ -101,7 +101,8 @@
                 vec4 c = texture2D(u_sampler, texcoord);
                 vec4 cur_color = gaussBlur(u_sampler, texcoord, vec2(720));
                 // gl_FragColor = c + cur_color;
-                gl_FragColor = c + cur_color * (luminance(cur_color.rgb) + INTENCITY);
+                float lum = luminance(cur_color.rgb);
+                gl_FragColor = c + cur_color * (lum + INTENCITY);
 
             }
         </script>

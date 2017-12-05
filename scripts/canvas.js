@@ -37,7 +37,7 @@ gl.useProgram(shaderProgram);
 
 // let coloc = gl.getAttribLocation(shaderProgram, "a_Color");
 
-let mod = GenerateModel(1.8, 0.8, 100);
+let mod = GenerateModel(1.8, 0.8, 4);
 let vertices = mod.vertices;
 let normals = mod.normals;
 let colors = mod.color;
@@ -59,7 +59,7 @@ attributeBuffer(shaderProgram.a_texCoord, texCs, 2, gl.FLOAT);
 
 
 
-gl.clearColor(0.0, 0.0, 0.0, 1.0);
+gl.clearColor(0.1, 0.4, 0.6, 1.0);
 gl.enable(gl.DEPTH_TEST);
 // gl.enable(gl.POLYGON_OFFSET_FILL);
 gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_COLOR_BIT);
