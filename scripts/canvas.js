@@ -37,7 +37,7 @@ gl.useProgram(shaderProgram);
 
 // let coloc = gl.getAttribLocation(shaderProgram, "a_Color");
 
-let mod = GenerateModel(1.8, 0.8, 4);
+let mod = GenerateModel(1.8, 0.8, 300);
 let vertices = mod.vertices;
 let normals = mod.normals;
 let colors = mod.color;
