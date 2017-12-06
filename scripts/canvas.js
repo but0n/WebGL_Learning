@@ -1,6 +1,30 @@
 
 let gl = document.getElementsByClassName('ctx').item(0).getContext('webgl');
 
+let rad = 1;
+let sigma = rad*3.3;
+let sigma2 = 2.0 * sigma * sigma;
+let sigmap = sigma2 * Math.PI;
+let wsum = 0;
+let result = [];
+for(let i = -rad; i <= rad; i++) {
+    for(let j = -rad; j <= rad; j++) {
+        let w = Math.exp(-(i*i + j*j) / sigma2) / sigmap;
+        wsum += w;
+    }
+}
+console.log('sum:\t' + wsum);
+for(let i = -rad; i <= rad; i++) {
+    for(let j = -rad; j <= rad; j++) {
+        let w = Math.exp(-(i*i + j*j) / sigma2) / sigmap / wsum;
+        if(j>=0 && i>=0) {
+            console.log('('+j+','+i+')\t' + w);
+            result.push(w);}
+    }
+    console.log('\n');
+}
+console.log(result);
+
 
 function getShader(e, GL_ctx) {
     let dom = document.getElementById(e);
