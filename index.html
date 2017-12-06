@@ -74,35 +74,9 @@
             uniform sampler2D u_sampler;
             varying vec2 v_texCoord;    // 每个片元的纹素坐标
             // 采样半径
-            #define RADIUS          12
             #define INTENCITY       1.0
             #define SAMPLE_AMOUNT   (RADIUS*2+1)*(RADIUS*2+1)
 
-            vec4 gaussBlur(sampler2D image, vec2 uv, vec2 resolution) {
-                vec4 color = vec4(0);
-                float sigma = float(RADIUS) / 2.0;
-                float sigma2 = 2.0 * sigma * sigma;
-                float sigmap = sigma2 * PI;
-                for(int i = -RADIUS; i <= RADIUS; i++) {
-                    int i2 = i*i;
-                    for(int j = -RADIUS; j <= RADIUS; j++) {
-                        float w = exp(-float(i2 + j * j)/ sigma2) / sigmap; // Current Weight
-                        vec2 p = uv + vec2(j, i) / resolution;
-                        if(p.x > 1.0) {
-                            p.x -= (p.x -1.0) * 2.0;
-                        } else if(p.x <= -1.0) {
-                            p.x += (-p.x - 1.0 ) * 2.0;
-                        }
-                        if(p.y > 1.0) {
-                            p.y -= (p.y -1.0) * 2.0;
-                        } else if(p.y <= -1.0) {
-                            p.y += (-p.y - 1.0) * 2.0;
-                        }
-                        color += texture2D(image, p) * w;
-                    }
-                }
-                return color;
-            }
             float luminance(vec3 rgb) {
                 const vec3 w = vec3(0.2125, 0.7154, 0.0721);
                 return dot(rgb, w);
@@ -125,7 +99,7 @@
                             vec4 linearBlur = vec4(0.0);
                             for(int ly = -1; ly <= 1; ly++) {
                                 for(int lx = -1; lx <= 1; lx++) {
-                                    linearBlur +=   texture2D(image, p + vec2(lx, ly) / resolution) / 9.0;
+                                    linearBlur += texture2D(image, p + vec2(lx, ly) / resolution) / 9.0;
                                 }
                             }
                             blur += linearBlur * kernel2[x<0?-x:x][y<0?-y:y];
@@ -138,7 +112,7 @@
                             vec4 linearBlur = vec4(0.0);
                             for(int ly = -3; ly <= 3; ly++) {
                                 for(int lx = -3; lx <= 3; lx++) {
-                                    linearBlur +=   texture2D(image, p + vec2(lx, ly) / resolution) / 49.0;
+                                    linearBlur += texture2D(image, p + vec2(lx, ly) / resolution) / 49.0;
                                 }
                             }
                             blur += linearBlur * kernel2[x<0?-x:x][y<0?-y:y];
@@ -151,7 +125,7 @@
                             vec4 linearBlur = vec4(0.0);
                             for(int ly = -7; ly <= 7; ly++) {
                                 for(int lx = -7; lx <= 7; lx++) {
-                                    linearBlur +=   texture2D(image, p + vec2(lx, ly) / resolution) / 225.0;
+                                    linearBlur += texture2D(image, p + vec2(lx, ly) / resolution) / 225.0;
                                 }
                             }
                             blur += linearBlur * kernel2[x<0?-x:x][y<0?-y:y];
