@@ -68,14 +68,14 @@
             }
         </script>
         <script id="Shader-ch1-fs" type="x-shader/x-fragment">
-            #define PI          3.1415926535898
+            #define PI              3.1415926535898
             precision mediump float;
 
             uniform sampler2D u_sampler;
             varying vec2 v_texCoord;    // 每个片元的纹素坐标
             // 采样半径
             #define RADIUS          12
-            #define INTENCITY       0.4
+            #define INTENCITY       1.0
             #define SAMPLE_AMOUNT   (RADIUS*2+1)*(RADIUS*2+1)
 
             vec4 gaussBlur(sampler2D image, vec2 uv, vec2 resolution) {
@@ -96,7 +96,7 @@
                         if(p.y > 1.0) {
                             p.y -= (p.y -1.0) * 2.0;
                         } else if(p.y <= -1.0) {
-                            p.y += (-p.y - 1.0 ) * 2.0;
+                            p.y += (-p.y - 1.0) * 2.0;
                         }
                         color += texture2D(image, p) * w;
                     }
@@ -108,67 +108,57 @@
                 return dot(rgb, w);
             }
             // kernel{radius}
-            mat2 kernel1 = mat2(
-                0.11807005367456144, 0.11277158950400096,
-                0.11277158950400096, 0.10771089707735866
-            );
-
             mat3 kernel2 = mat3(
                 0.04952802924382314, 0.04685150823948568, 0.039658945508286664,
                 0.04685150823948568, 0.044319627851704825, 0.037515755030421205,
                 0.039658945508286664, 0.037515755030421205, 0.03175640102872468
             );
-            mat4 kernel3 = mat4(
-                0.0246863450809378, 0.024084269318632716, 0.02236472247559631, 0.019767279847618256,
-                0.024084269318632716, 0.023496877594096962, 0.021819268813294802, 0.019285175265350923,
-                0.02236472247559631, 0.021819268813294802, 0.020261436424489996, 0.01790826979206415,
-                0.019767279847618256, 0.019285175265350923, 0.01790826979206415, 0.015828400327911597
-            );
 
 
-            vec4 fastGaussBlur(sampler2D image, vec2 uv, int radius, float distance, vec2 resolution) {
+
+            vec4 fastGaussBlur(sampler2D image, vec2 uv, const int radius, vec2 resolution) {
                 vec4 blur = vec4(0.0);
                 if(radius == 1) {
-                    for(int y = -1; y <= 1; y++) {
-                        for(int x = -1; x <= 1; x++) {
+                    for(int y = -2; y <= 2; y++) {
+                        for(int x = -2; x <= 2; x++) {
                             vec2 p = uv + vec2(x, y) / resolution * 1.0;
                             vec4 linearBlur = vec4(0.0);
                             for(int ly = -1; ly <= 1; ly++) {
                                 for(int lx = -1; lx <= 1; lx++) {
-                                    linearBlur += texture2D(image, p + vec2(lx, ly)/ resolution) / 9.0;
+                                    linearBlur +=   texture2D(image, p + vec2(lx, ly) / resolution) / 9.0;
                                 }
                             }
-                            blur += linearBlur * kernel1[x<0?-x:x][y<0?-y:y];
+                            blur += linearBlur * kernel2[x<0?-x:x][y<0?-y:y];
                         }
                     }
                 } else if(radius == 2) {
                     for(int y = -2; y <= 2; y++) {
                         for(int x = -2; x <= 2; x++) {
-                            vec2 p = uv + vec2(x, y) / resolution * 2.0;
+                            vec2 p = uv + vec2(x, y) / resolution * 3.0;
                             vec4 linearBlur = vec4(0.0);
-                            for(int ly = -2; ly <= 2; ly++) {
-                                for(int lx = -2; lx <= 2; lx++) {
-                                    linearBlur += texture2D(image, p + vec2(lx, ly)/ resolution) / 100.0;
+                            for(int ly = -3; ly <= 3; ly++) {
+                                for(int lx = -3; lx <= 3; lx++) {
+                                    linearBlur +=   texture2D(image, p + vec2(lx, ly) / resolution) / 49.0;
                                 }
                             }
                             blur += linearBlur * kernel2[x<0?-x:x][y<0?-y:y];
                         }
                     }
                 } else if(radius == 3) {
-                    for(int y = -3; y <= 3; y++) {
-                        for(int x = -3; x <= 3; x++) {
+                    for(int y = -2; y <= 2; y++) {
+                        for(int x = -2; x <= 2; x++) {
                             vec2 p = uv + vec2(x, y) / resolution * 7.0;
                             vec4 linearBlur = vec4(0.0);
                             for(int ly = -7; ly <= 7; ly++) {
                                 for(int lx = -7; lx <= 7; lx++) {
-                                    linearBlur += texture2D(image, p + vec2(lx, ly)/ resolution) / 255.0;
+                                    linearBlur +=   texture2D(image, p + vec2(lx, ly) / resolution) / 225.0;
                                 }
                             }
-                            blur += linearBlur * kernel3[x<0?-x:x][y<0?-y:y];
+                            blur += linearBlur * kernel2[x<0?-x:x][y<0?-y:y];
                         }
                     }
                 }
-                return blur;
+                return blur * (luminance(texture2D(image, uv).rgb) + INTENCITY);
             }
 
             void main () {
@@ -176,11 +166,13 @@
                 vec2 texcoord = vec2(v_texCoord);
                 vec4 c = texture2D(u_sampler, texcoord);
                 vec4 cur_color;
-                cur_color = fastGaussBlur(u_sampler, texcoord, 3, 1.0, vec2(360));
+                cur_color = fastGaussBlur(u_sampler, texcoord, 3, vec2(360));
 
                 float lum = luminance(cur_color.rgb);
-                // gl_FragColor = cur_color;
-                gl_FragColor = c + cur_color * (lum + INTENCITY);
+                float _lum = luminance(c.rgb);
+                gl_FragColor = cur_color;
+                // gl_FragColor = c + cur_color;
+                gl_FragColor = c + cur_color * (_lum + INTENCITY);
 
             }
         </script>

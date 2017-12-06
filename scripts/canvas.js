@@ -83,6 +83,7 @@ attributeBuffer(shaderProgram.a_texCoord, texCs, 2, gl.FLOAT);
 
 
 
+// gl.clearColor(1.0, 1.0, 1.0, 1.0);
 gl.clearColor(0.1, 0.4, 0.6, 1.0);
 gl.enable(gl.DEPTH_TEST);
 // gl.enable(gl.POLYGON_OFFSET_FILL);
