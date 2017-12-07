@@ -72,9 +72,8 @@
             uniform sampler2D u_sampler;
             varying vec2 v_texCoord;    // 每个片元的纹素坐标
             // 采样半径
-            #define INTENCITY       1.0
-            #define SAMPLE_AMOUNT   (RADIUS*2+1)*(RADIUS*2+1)
-
+            #define INTENCITY       3.3
+            #define THRESHOLD       0.1
             float luminance(vec3 rgb) {
                 const vec3 w = vec3(0.2125, 0.7154, 0.0721);
                 return dot(rgb, w);
@@ -123,14 +122,20 @@
                             vec4 linearBlur = vec4(0.0);
                             for(int ly = -7; ly <= 7; ly++) {
                                 for(int lx = -7; lx <= 7; lx++) {
-                                    linearBlur += texture2D(image, p + vec2(lx, ly) / resolution) / 225.0;
+                                    vec4 temp = texture2D(image, p + vec2(lx, ly) / resolution);
+                                    if(luminance(temp.rgb) >= THRESHOLD) {
+                                        linearBlur += temp / 225.0;
+                                    }
+                                    temp = vec4(0.0, 0.0, 0.0, 0.0);
+
                                 }
                             }
                             blur += linearBlur * kernel2[x<0?-x:x][y<0?-y:y];
                         }
                     }
                 }
-                return blur * (luminance(texture2D(image, uv).rgb) + INTENCITY);
+                blur = vec4(blur.rgb * INTENCITY, blur.a);
+                return blur * luminance(texture2D(image, uv).rgb);
             }
 
             void main () {
@@ -142,7 +147,8 @@
                 float lum = luminance(cur_color.rgb);
                 float _lum = luminance(c.rgb);
                 gl_FragColor = cur_color;
-                gl_FragColor = c + cur_color * (_lum + INTENCITY);
+                c = vec4(c.rgb * INTENCITY, c.a);
+                gl_FragColor = c + cur_color;
             }
         </script>
 
