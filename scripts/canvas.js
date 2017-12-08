@@ -241,7 +241,7 @@ let textureLoc = gl.getUniformLocation(shaderProgram, 'u_sampler');
 // Get location
 
 let image = new Image();
-image.src = './hello.png';
+image.src = './scene.png';
 image.onload = () => {
     gl.bindFramebuffer(gl.FRAMEBUFFER, basePlane);      // Render to base framebuffer
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_COLOR_BIT);
@@ -325,7 +325,8 @@ function bloom() {
     gl.useProgram(shader1);
         // Active TXTURE Channel 0 -- which is a texture of last rendering
     gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, basePlane.texture);
+    gl.bindTexture(gl.TEXTURE_2D, imageTexture);
+    // gl.bindTexture(gl.TEXTURE_2D, basePlane.texture);
     gl.uniform1i(shader1.u_sampler, 0);
     attributeBuffer(shader1.a_Position, new Float32Array([  // Vertex Postion
         -1, 1, 0.0,

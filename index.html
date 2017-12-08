@@ -72,9 +72,9 @@
             uniform sampler2D u_sampler;
             varying vec2 v_texCoord;    // 每个片元的纹素坐标
             // 采样半径
-            #define INTENSITY       1.3
-            #define THRESHOLD       0.1
-            #define BLUR_SPREAD     4.0/512.0
+            #define INTENSITY       2.0
+            #define THRESHOLD       0.6
+            #define BLUR_SPREAD     8.0/512.0
             #define tex(t, uv)      fragDownsample(t, uv, BLUR_SPREAD)
 
 
@@ -206,7 +206,7 @@
                 vec4 cur_color;
                 // cur_color = fastGaussBlur(u_sampler, texcoord, 3, vec2(720));
                 // cur_color = fastBlur(u_sampler, texcoord, 3, vec2(210));
-                cur_color = fastBlur(u_sampler, texcoord, 3, vec2(128.0));
+                cur_color = fastBlur(u_sampler, texcoord, 3, vec2(512.0));
 
                 float lum = luminance(cur_color.rgb);
                 float _lum = luminance(c.rgb);
