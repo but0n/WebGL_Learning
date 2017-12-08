@@ -72,9 +72,9 @@
             uniform sampler2D u_sampler;
             varying vec2 v_texCoord;    // 每个片元的纹素坐标
             // 采样半径
-            #define INTENSITY       2.0
-            #define THRESHOLD       0.6
-            #define BLUR_SPREAD     8.0/512.0
+            #define INTENSITY       1.5
+            #define THRESHOLD       0.3
+            #define BLUR_SPREAD     2.0/512.0
             #define tex(t, uv)      fragDownsample(t, uv, BLUR_SPREAD)
 
 
@@ -142,61 +142,6 @@
                 }
 
                 return blur;
-            }
-
-
-
-
-
-            vec4 fastGaussBlur(sampler2D image, vec2 uv, const int radius, vec2 resolution) {
-                vec4 blur = vec4(0.0);
-                if(radius == 1) {
-                    for(int y = -2; y <= 2; y++) {
-                        for(int x = -2; x <= 2; x++) {
-                            vec2 p = uv + vec2(x, y) / resolution * 1.0;
-                            vec4 linearBlur = vec4(0.0);
-                            for(int ly = -1; ly <= 1; ly++) {
-                                for(int lx = -1; lx <= 1; lx++) {
-                                    linearBlur += texture2D(image, p + vec2(lx, ly) / resolution) / 9.0;
-                                }
-                            }
-                            blur += linearBlur * kernel2[x<0?-x:x][y<0?-y:y];
-                        }
-                    }
-                } else if(radius == 2) {
-                    for(int y = -2; y <= 2; y++) {
-                        for(int x = -2; x <= 2; x++) {
-                            vec2 p = uv + vec2(x, y) / resolution * 3.0;
-                            vec4 linearBlur = vec4(0.0);
-                            for(int ly = -3; ly <= 3; ly++) {
-                                for(int lx = -3; lx <= 3; lx++) {
-                                    linearBlur += texture2D(image, p + vec2(lx, ly) / resolution) / 49.0;
-                                }
-                            }
-                            blur += linearBlur * kernel2[x<0?-x:x][y<0?-y:y];
-                        }
-                    }
-                } else if(radius == 3) {
-                    for(int y = -2; y <= 2; y++) {
-                        for(int x = -2; x <= 2; x++) {
-                            vec2 p = uv + vec2(x, y) / resolution * 7.0;
-                            vec4 linearBlur = vec4(0.0);
-                            for(int ly = -7; ly <= 7; ly++) {
-                                for(int lx = -7; lx <= 7; lx++) {
-                                    vec4 temp = texture2D(image, p + vec2(lx, ly) / resolution);
-                                    if(luminance(temp.rgb) >= THRESHOLD) {
-                                        linearBlur += temp / 225.0;
-                                    }
-                                    temp = vec4(0.0, 0.0, 0.0, 0.0);
-
-                                }
-                            }
-                            blur += linearBlur * kernel2[x<0?-x:x][y<0?-y:y];
-                        }
-                    }
-                }
-                blur = vec4(blur.rgb * INTENSITY, blur.a);
-                return blur * luminance(texture2D(image, uv).rgb);
             }
 
             void main () {
