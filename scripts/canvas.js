@@ -131,10 +131,10 @@ gl.uniform3f(ambLoc, 0.1, 0.1, 0.1);
 
 gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_COLOR_BIT);
 
-
+// Buffer Pool
 // _=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=
 // Create Framebuffer NOTE
-let fb = gl.createFramebuffer();
+let basePlane = gl.createFramebuffer();
 
 // Create NOTE Texturebuffer NOTE to store color data
 let textureBuffer = gl.createTexture();
@@ -142,7 +142,7 @@ gl.bindTexture(gl.TEXTURE_2D, textureBuffer);
 gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, 512, 512, 0, gl.RGB, gl.UNSIGNED_BYTE, null);
 gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 // NOTE: Bug was a Typo!!! gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LIEARN);
-fb.texture = textureBuffer;
+basePlane.texture = textureBuffer;
 
 // _=Create NOTE Renderbuffer NOTE to store depth data
 let depthBuffer = gl.createRenderbuffer();
@@ -150,8 +150,74 @@ gl.bindRenderbuffer(gl.RENDERBUFFER, depthBuffer);
 gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16, 512, 512);
 
 // NOTE: Attach those
-gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
+gl.bindFramebuffer(gl.FRAMEBUFFER, basePlane);
 gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, textureBuffer, 0);
+gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, depthBuffer);
+// _=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=
+// Create Framebuffer NOTE
+let effectChannel1 = gl.createFramebuffer();
+
+// Create NOTE Texturebuffer NOTE to store color data
+let textureBuffer1 = gl.createTexture();
+gl.bindTexture(gl.TEXTURE_2D, textureBuffer1);
+gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, 512, 512, 0, gl.RGB, gl.UNSIGNED_BYTE, null);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+// NOTE: Bug was a Typo!!! gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LIEARN);
+effectChannel1.texture = textureBuffer1;
+
+// NOTE: Attach those
+gl.bindFramebuffer(gl.FRAMEBUFFER, effectChannel1);
+gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, textureBuffer1, 0);
+gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, depthBuffer);
+// _=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=
+// Create Framebuffer NOTE
+let effectChannel2 = gl.createFramebuffer();
+
+// Create NOTE Texturebuffer NOTE to store color data
+let textureBuffer2 = gl.createTexture();
+gl.bindTexture(gl.TEXTURE_2D, textureBuffer2);
+gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, 512, 512, 0, gl.RGB, gl.UNSIGNED_BYTE, null);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+// NOTE: Bug was a Typo!!! gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LIEARN);
+effectChannel2.texture = textureBuffer2;
+
+// NOTE: Attach those
+gl.bindFramebuffer(gl.FRAMEBUFFER, effectChannel2);
+gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, textureBuffer2, 0);
+gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, depthBuffer);
+// _=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=
+// _=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=
+// Create Framebuffer NOTE
+let effectChannel3 = gl.createFramebuffer();
+
+// Create NOTE Texturebuffer NOTE to store color data
+let textureBuffer3 = gl.createTexture();
+gl.bindTexture(gl.TEXTURE_2D, textureBuffer3);
+gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, 512, 512, 0, gl.RGB, gl.UNSIGNED_BYTE, null);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+// NOTE: Bug was a Typo!!! gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LIEARN);
+effectChannel3.texture = textureBuffer3;
+
+// NOTE: Attach those
+gl.bindFramebuffer(gl.FRAMEBUFFER, effectChannel3);
+gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, textureBuffer3, 0);
+gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, depthBuffer);
+// _=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=
+// _=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=
+// Create Framebuffer NOTE
+let effectChannel4 = gl.createFramebuffer();
+
+// Create NOTE Texturebuffer NOTE to store color data
+let textureBuffer4 = gl.createTexture();
+gl.bindTexture(gl.TEXTURE_2D, textureBuffer4);
+gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, 512, 512, 0, gl.RGB, gl.UNSIGNED_BYTE, null);
+gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+// NOTE: Bug was a Typo!!! gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LIEARN);
+effectChannel4.texture = textureBuffer4;
+
+// NOTE: Attach those
+gl.bindFramebuffer(gl.FRAMEBUFFER, effectChannel4);
+gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, textureBuffer4, 0);
 gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT, gl.RENDERBUFFER, depthBuffer);
 // _=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=
 
@@ -170,27 +236,27 @@ shader1.u_sampler = gl.getUniformLocation(shader1, "u_sampler");
 
 
 // Main Textrue
-let texture = gl.createTexture(); // Create Textrue
+let imageTexture = gl.createTexture(); // Create Textrue
 let textureLoc = gl.getUniformLocation(shaderProgram, 'u_sampler');
 // Get location
 
 let image = new Image();
 image.src = './hello.png';
 image.onload = () => {
+    gl.bindFramebuffer(gl.FRAMEBUFFER, basePlane);      // Render to base framebuffer
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_COLOR_BIT);
 
     // NOTE: Render to Framebuffer
     gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
-    gl.activeTexture(gl.TEXTURE1);
-    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.activeTexture(gl.TEXTURE0);
+    gl.bindTexture(gl.TEXTURE_2D, imageTexture);
     // Configure
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
     // Sending data
-    gl.uniform1i(textureLoc, 1);
+    gl.uniform1i(textureLoc, 0);
 
     gl.activeTexture(gl.TEXTURE1);
-    gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
 // Vertex remap index
     let vmapBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, vmapBuffer);
@@ -208,7 +274,8 @@ let last_time = Date.now();
 let move = () => {
     let d = Date.now() - last_time;
     last_time = Date.now();
-    // gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_COLOR_BIT);
+
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_COLOR_BIT);
     model.rotate(-60/1000*d, 0, 1, 0);
     model.rotate(-60/1000*d, 1, 0, 0);
     // matrix.translate(0, 0, -1/1000*d);
@@ -216,7 +283,7 @@ let move = () => {
 
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_COLOR_BIT);
     gl.useProgram(shaderProgram);
-    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, basePlane);
     gl.activeTexture(gl.TEXTURE1);
     attributeBuffer(shaderProgram.a_Position, vertices, 3, gl.FLOAT);
 
@@ -232,7 +299,6 @@ let move = () => {
     gl.uniform1i(textureLoc, 1);
 
     gl.activeTexture(gl.TEXTURE1);
-    gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
 // Vertex remap index
 
 
@@ -254,12 +320,12 @@ function drawOrigin() {
 
 }
 function bloom() {
-    // NOTE: Toggle buffer, Disable Framebuffer, Render to canvas NOTE
+    // NOTE: Toggle target buffer                       NOTE
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     gl.useProgram(shader1);
         // Active TXTURE Channel 0 -- which is a texture of last rendering
     gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, fb.texture);
+    gl.bindTexture(gl.TEXTURE_2D, basePlane.texture);
     gl.uniform1i(shader1.u_sampler, 0);
     attributeBuffer(shader1.a_Position, new Float32Array([  // Vertex Postion
         -1, 1, 0.0,
@@ -274,6 +340,34 @@ function bloom() {
         0.0, 0.0
     ]), 2, gl.FLOAT);
     let buf = gl.createBuffer();
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array([
+        0, 1, 2,
+        0, 2, 3
+    ]), gl.STATIC_DRAW);
+
+    gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0); // Render
+    return;
+    // NOTE: Toggle buffer, Disable Framebuffer, Render to canvas NOTE
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    gl.useProgram(shader1);
+        // Active TXTURE Channel 0 -- which is a texture of last rendering
+    gl.activeTexture(gl.TEXTURE3);
+    gl.bindTexture(gl.TEXTURE_2D, effectChannel1.texture);
+    gl.uniform1i(shader1.u_sampler, 3);
+    attributeBuffer(shader1.a_Position, new Float32Array([  // Vertex Postion
+        -1, 1, 0.0,
+        1, 1, 0.0,
+        1, -1, 0.0,
+        -1, -1, 0.0
+    ]), 3, gl.FLOAT);
+    attributeBuffer(shader1.a_texCoord, new Float32Array([  // TexCoord
+        0.0, 1.0,
+        1.0, 1.0,
+        1.0, 0.0,
+        0.0, 0.0
+    ]), 2, gl.FLOAT);
+    buf = gl.createBuffer();
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buf);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array([
         0, 1, 2,
