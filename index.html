@@ -73,8 +73,8 @@
             varying vec2 v_texCoord;    // 每个片元的纹素坐标
             // 采样半径
             #define INTENSITY       1.2
-            #define THRESHOLD       0.24
-            #define BLUR_SPREAD     1.9/512.0
+            #define THRESHOLD       0.3
+            #define BLUR_SPREAD     3.0/512.0
             #define tex(t, uv)      fragDownsample(t, uv, BLUR_SPREAD)
 
 
@@ -112,7 +112,7 @@
                 curve[5] = vec4(0.0855, 0.0855, 0.0855, 0.0);
                 curve[6] = vec4(0.0205, 0.0205, 0.0205, 0.0);
                 // horizontal blur
-                netFilterWidth = vec2(1.0 / resolution.x, 0.0);
+                netFilterWidth = vec2(resolution);
                 _offset[0] = uv + netFilterWidth * 3.0;
                 _offset[1] = uv + netFilterWidth * 2.0;
                 _offset[2] = uv + netFilterWidth;
@@ -124,7 +124,7 @@
                     blur += tex(image, _offset[l]) * curve[l];
                 }
                 // vertical blur
-                netFilterWidth = vec2(0.0, 1.0 / resolution.y);
+                netFilterWidth = vec2(resolution);
                 _offset[0] = uv + netFilterWidth * 3.0;
                 _offset[1] = uv + netFilterWidth * 2.0;
                 _offset[2] = uv + netFilterWidth;
@@ -146,7 +146,7 @@
                 vec4 cur_color;
                 // cur_color = fastGaussBlur(u_sampler, texcoord, 3, vec2(720));
                 // cur_color = fastBlur(u_sampler, texcoord, 3, vec2(210));
-                cur_color = fastBlur(u_sampler, texcoord, 3, vec2(512.0));
+                cur_color = fastBlur(u_sampler, texcoord, 3, vec2(1.0/512.0));
 
                 float lum = luminance(cur_color.rgb);
                 float _lum = luminance(c.rgb);
