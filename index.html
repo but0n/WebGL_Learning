@@ -117,9 +117,9 @@
                 _offset[1] = uv + netFilterWidth * 2.0;
                 _offset[2] = uv + netFilterWidth;
                 _offset[3] = uv;
-                _offset[4] = uv + netFilterWidth;
-                _offset[5] = uv + netFilterWidth * 2.0;
-                _offset[6] = uv + netFilterWidth * 3.0;
+                _offset[4] = uv - netFilterWidth;
+                _offset[5] = uv - netFilterWidth * 2.0;
+                _offset[6] = uv - netFilterWidth * 3.0;
                 for(int l = 0; l < 7; l++) {
                     blur += tex(image, _offset[l]) * curve[l];
                 }
@@ -129,9 +129,9 @@
                 _offset[1] = uv + netFilterWidth * 2.0;
                 _offset[2] = uv + netFilterWidth;
                 _offset[3] = uv;
-                _offset[4] = uv + netFilterWidth;
-                _offset[5] = uv + netFilterWidth * 2.0;
-                _offset[6] = uv + netFilterWidth * 3.0;
+                _offset[4] = uv - netFilterWidth;
+                _offset[5] = uv - netFilterWidth * 2.0;
+                _offset[6] = uv - netFilterWidth * 3.0;
                 for(int l = 0; l < 7; l++) {
                     blur += tex(image, _offset[l]) * curve[l];
                 }
