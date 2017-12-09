@@ -8,7 +8,7 @@
     </head>
     <body>
 
-        <canvas class="ctx" width="512px" height="512px" onclick="move()"></canvas>
+        <canvas class="ctx" width="1024px" height="1024px" onclick="move()"></canvas>
 
         <script id="Shader-vs" type="x-shader/x-vertex">
             attribute vec3 a_Position;         // 每个顶点的坐标
@@ -72,9 +72,9 @@
             uniform sampler2D u_sampler;
             varying vec2 v_texCoord;    // 每个片元的纹素坐标
             // 采样半径
-            #define INTENSITY       1.2
-            #define THRESHOLD       0.3
-            #define BLUR_SPREAD     3.0/512.0
+            #define INTENSITY       0.9
+            #define THRESHOLD       0.13
+            #define BLUR_SPREAD     1.5/1024.0
             #define tex(t, uv)      fragDownsample(t, uv, BLUR_SPREAD)
 
 
@@ -146,12 +146,12 @@
                 vec4 cur_color;
                 // cur_color = fastGaussBlur(u_sampler, texcoord, 3, vec2(720));
                 // cur_color = fastBlur(u_sampler, texcoord, 3, vec2(210));
-                cur_color = fastBlur(u_sampler, texcoord, 3, vec2(1.0/512.0));
+                cur_color = fastBlur(u_sampler, texcoord, 3, vec2(1.6/1024.0));
 
                 float lum = luminance(cur_color.rgb);
                 float _lum = luminance(c.rgb);
                 // gl_FragColor = cur_color;
-                c = vec4(c.rgb * INTENSITY, c.a);
+                // c = vec4(c.rgb * INTENSITY, c.a);
                 gl_FragColor = c + cur_color;
             }
         </script>
