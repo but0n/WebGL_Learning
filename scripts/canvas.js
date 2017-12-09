@@ -241,7 +241,8 @@ let textureLoc = gl.getUniformLocation(shaderProgram, 'u_sampler');
 // Get location
 
 let image = new Image();
-image.src = './scene.png';
+image.src = './test2.png';
+
 image.onload = () => {
     gl.bindFramebuffer(gl.FRAMEBUFFER, basePlane);      // Render to base framebuffer
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_COLOR_BIT);

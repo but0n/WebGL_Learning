@@ -72,9 +72,9 @@
             uniform sampler2D u_sampler;
             varying vec2 v_texCoord;    // 每个片元的纹素坐标
             // 采样半径
-            #define INTENSITY       1.5
-            #define THRESHOLD       0.3
-            #define BLUR_SPREAD     2.0/512.0
+            #define INTENSITY       1.2
+            #define THRESHOLD       0.24
+            #define BLUR_SPREAD     1.9/512.0
             #define tex(t, uv)      fragDownsample(t, uv, BLUR_SPREAD)
 
 
@@ -83,12 +83,7 @@
                 const vec3 w = vec3(0.2125, 0.7154, 0.0721);
                 return dot(rgb, w);
             }
-            // kernel{radius}
-            mat3 kernel2 = mat3(
-                0.04952802924382314, 0.04685150823948568, 0.039658945508286664,
-                0.04685150823948568, 0.044319627851704825, 0.037515755030421205,
-                0.039658945508286664, 0.037515755030421205, 0.03175640102872468
-            );
+
             // Blur spread 扩撒
             vec4 fragDownsample(sampler2D image, vec2 uv, float _MainTex_TexelSize) {
                 vec2 uv2[4];
