@@ -72,9 +72,9 @@
             uniform sampler2D u_sampler;
             varying vec2 v_texCoord;    // 每个片元的纹素坐标
             // 采样半径
-            #define INTENSITY       0.9
-            #define THRESHOLD       0.13
-            #define BLUR_SPREAD     1.5/1024.0
+            #define INTENSITY       1.2
+            #define THRESHOLD       0.24
+            #define BLUR_SPREAD     3.5/1024.0
             #define tex(t, uv)      fragDownsample(t, uv, BLUR_SPREAD)
 
 
@@ -87,16 +87,18 @@
             // Blur spread 扩撒
             vec4 fragDownsample(sampler2D image, vec2 uv, float _MainTex_TexelSize) {
                 vec2 uv2[4];
-                uv2[0] = uv + _MainTex_TexelSize * vec2(1.5, 1.5);
-                uv2[1] = uv + _MainTex_TexelSize * vec2(-1.5, 1.5);
-                uv2[2] = uv + _MainTex_TexelSize * vec2(-1.5, -1.5);
-                uv2[3] = uv + _MainTex_TexelSize * vec2(1.5, -1.5);
+                uv2[0] = uv + _MainTex_TexelSize * vec2(0.5, 0.5);
+                uv2[1] = uv + _MainTex_TexelSize * vec2(-0.5, 0.5);
+                uv2[2] = uv + _MainTex_TexelSize * vec2(-0.5, -0.5);
+                uv2[3] = uv + _MainTex_TexelSize * vec2(0.5, -0.5);
                 vec4 color;
-                color += texture2D(image, uv2[0]);
+                color += texture2D(image, uv);
                 color += texture2D(image, uv2[1]);
                 color += texture2D(image, uv2[2]);
                 color += texture2D(image, uv2[3]);
                 return max(color/4.0 - THRESHOLD, vec4(0.0)) * INTENSITY;
+                // return luminance(color.rgb)>=THRESHOLD ? color * INTENSITY: vec4(0.0);
+                // return max(texture2D(image, uv) - THRESHOLD, vec4(0.0)) * INTENSITY;
             }
             vec4 fastBlur(sampler2D image, vec2 uv, const int radius, vec2 resolution) {
 
@@ -146,13 +148,15 @@
                 vec4 cur_color;
                 // cur_color = fastGaussBlur(u_sampler, texcoord, 3, vec2(720));
                 // cur_color = fastBlur(u_sampler, texcoord, 3, vec2(210));
-                cur_color = fastBlur(u_sampler, texcoord, 3, vec2(1.6/1024.0));
+                cur_color = fastBlur(u_sampler, texcoord, 3, vec2(BLUR_SPREAD));
 
                 float lum = luminance(cur_color.rgb);
                 float _lum = luminance(c.rgb);
                 // gl_FragColor = cur_color;
-                // c = vec4(c.rgb * INTENSITY, c.a);
+                c = vec4(c.rgb * INTENSITY, c.a);
+                // gl_FragColor = cur_color;
                 gl_FragColor = c + cur_color;
+
             }
         </script>
 
