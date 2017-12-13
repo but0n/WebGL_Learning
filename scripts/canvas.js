@@ -243,7 +243,7 @@ let textureLoc = gl.getUniformLocation(shaderProgram, 'u_sampler');
 let image = new Image();
 image.src = './hello.png';
 image.onload = () => {
-    gl.bindFramebuffer(gl.FRAMEBUFFER, basePlane);      // Render to base framebuffer
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);      // Render to base framebuffer
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_COLOR_BIT);
 
     // NOTE: Render to Framebuffer
@@ -256,7 +256,7 @@ image.onload = () => {
     // Sending data
     gl.uniform1i(textureLoc, 0);
 
-    gl.activeTexture(gl.TEXTURE1);
+    // gl.activeTexture(gl.TEXTURE1);
 // Vertex remap index
     let vmapBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, vmapBuffer);
@@ -265,7 +265,7 @@ image.onload = () => {
     // move();
 // return;
             // Effect - bloom
-    bloom();
+    // bloom();
 
 
 };
@@ -283,7 +283,7 @@ let move = () => {
 
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_COLOR_BIT);
     gl.useProgram(shaderProgram);
-    gl.bindFramebuffer(gl.FRAMEBUFFER, basePlane);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
     gl.activeTexture(gl.TEXTURE1);
     attributeBuffer(shaderProgram.a_Position, vertices, 3, gl.FLOAT);
 
@@ -311,7 +311,7 @@ let move = () => {
 
     console.log('FPS:'+Math.floor(1000/d));
 
-    bloom();
+    // bloom();
 
     requestAnimationFrame(move);
 }
