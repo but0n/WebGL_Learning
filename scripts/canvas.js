@@ -61,7 +61,7 @@ gl.useProgram(shaderProgram);
 
 // let coloc = gl.getAttribLocation(shaderProgram, "a_Color");
 
-let mod = GenerateModel(1.8, 0.8, 300);
+let mod = GenerateModel(1.8, 0.8, 100);
 let vertices = mod.vertices;
 let normals = mod.normals;
 let colors = mod.color;
@@ -76,6 +76,8 @@ attributeBuffer(shaderProgram.a_Normal, normals, 3, gl.FLOAT);
 shaderProgram.a_texCoord= gl.getAttribLocation(shaderProgram, "a_texCoord");
 attributeBuffer(shaderProgram.a_texCoord, texCs, 2, gl.FLOAT);
 
+shaderProgram.u_Camera = gl.getUniformLocation(shaderProgram, "u_Camera");
+
 
 
 
@@ -84,7 +86,7 @@ attributeBuffer(shaderProgram.a_texCoord, texCs, 2, gl.FLOAT);
 
 
 // gl.clearColor(1.0, 1.0, 1.0, 1.0);
-gl.clearColor(0.1, 0.4, 0.6, 1.0);
+gl.clearColor(0.3, 1.0, 0.6, 1.0);
 gl.enable(gl.DEPTH_TEST);
 // gl.enable(gl.POLYGON_OFFSET_FILL);
 gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_COLOR_BIT);
@@ -96,7 +98,7 @@ let model = new Matrix4();
 let view = new Matrix4();
 // view.setLookAt(0, 0, 5, 0, 0, -100, 0, 1, 0);
 view.setLookAt(4, 3, 2, 0, 1, 0, 0, 1, 0);
-
+gl.uniform3fv(shaderProgram.u_Camera, new Vector3([4, 3, 2]).elements);
 
 let proje = new Matrix4();
 proje.setPerspective(30, 1, 1, 100);

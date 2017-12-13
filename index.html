@@ -40,6 +40,8 @@
             uniform vec3 u_lightColor;      // Current frame const 光源颜色
             uniform vec3 u_lightPosition;   // Current frame const 光源位置
 
+            uniform vec3 u_Camera;
+
             uniform sampler2D u_sampler;
             varying vec3 v_normal;          // 每个片元的法线
             varying vec3 v_pos;             // 每个片元的位置
@@ -47,13 +49,28 @@
             // varying vec4 v_color;           // 每个片元的固有色
             void main () {
                 // vec4 color = texture2D(u_sampler, v_texCoord);
+
+                vec3 n = normalize(v_normal);
+                vec3 v = normalize(u_Camera - v_pos);
+                vec3 l = normalize(u_lightPosition - v_pos);
+                vec3 h = normalize(l+v);
+                vec3 f0 = vec3(0.04);
+                vec3 F;
+                float VdotH = dot(v, n);
+                // float VdotH = dot(v, h);
+                F = f0 + (1.0 - f0) * pow(clamp(1.0 - VdotH, 0.0, 1.0), 5.0);
+                // F /= 4.0 * dot(n, l) * dot(n, v);
+
                 vec4 color = vec4(1.0);
                 vec3 normal = normalize(v_normal);
                 vec3 lightDirection = normalize(u_lightPosition-v_pos);
                 float dolt = max(dot(lightDirection, normal), 0.0); // cos() - 当前片元的漫反射强度
                 vec3 diffuse = u_lightColor * color.rgb * dolt;   // 计算当前片元的漫反射颜色
                 vec3 ambient = u_ambientLight * color.rgb;        // 环境光 (全局光)
-                gl_FragColor = vec4(diffuse + ambient, color.a);  // 漫反射 + 全局光
+                // gl_FragColor = vec4(diffuse + ambient, color.a);  // 漫反射 + 全局光
+
+                gl_FragColor = vec4(F, 1.0);
+                // gl_FragColor = vec4(F * color.rgb, 1.0);
             }
         </script>
 <!-- Channel 1 -->
