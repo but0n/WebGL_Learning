@@ -35,6 +35,7 @@
             }
         </script>
         <script id="Shader-fs" type="x-shader/x-fragment">
+            #define PI              3.1415926535898
             precision mediump float;
             uniform vec3 u_ambientLight;    // Current frame const 环境光颜色
             uniform vec3 u_lightColor;      // Current frame const 光源颜色
@@ -54,12 +55,27 @@
                 vec3 v = normalize(u_Camera - v_pos);
                 vec3 l = normalize(u_lightPosition - v_pos);
                 vec3 h = normalize(l+v);
-                vec3 f0 = vec3(0.04);
+
+                // Fresnel - Specular Reflection
                 vec3 F;
-                float VdotH = dot(v, n);
-                // float VdotH = dot(v, h);
+                vec3 f0 = vec3(0.04);
+                // float VdotH = dot(v, n);
+                float VdotH = dot(v, h);
                 F = f0 + (1.0 - f0) * pow(clamp(1.0 - VdotH, 0.0, 1.0), 5.0);
                 // F /= 4.0 * dot(n, l) * dot(n, v);
+
+                // Distribution
+                float D;
+                float roughness = 0.4;
+                float alpha = roughness * roughness;
+                float alphaSq = alpha * alpha;
+                float NdotH = dot(n, h);
+                float NdotHSq = NdotH * NdotH;
+                D = alphaSq / pow( NdotHSq * alphaSq - NdotHSq + 1.0, 2.0) * PI;
+
+
+
+
 
                 vec4 color = vec4(1.0);
                 vec3 normal = normalize(v_normal);
@@ -69,7 +85,8 @@
                 vec3 ambient = u_ambientLight * color.rgb;        // 环境光 (全局光)
                 // gl_FragColor = vec4(diffuse + ambient, color.a);  // 漫反射 + 全局光
 
-                gl_FragColor = vec4(F, 1.0);
+                // gl_FragColor = vec4(F, 1.0);
+                gl_FragColor = vec4(vec3(0.5) * D, 1.0);
                 // gl_FragColor = vec4(F * color.rgb, 1.0);
             }
         </script>
