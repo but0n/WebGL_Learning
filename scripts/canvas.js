@@ -110,12 +110,12 @@ gl.uniformMatrix4fv(modelLocation, false, model.elements);
 gl.uniformMatrix4fv(viewLocation, false, view.elements);
 gl.uniformMatrix4fv(projeLocation, false, proje.elements);
 // Light uniform
-let lightColorLoc = gl.getUniformLocation(shaderProgram, "u_lightColor");
-gl.uniform3f(lightColorLoc, 1.0, 1.0, 1.0);
-let lightDirectionLoc = gl.getUniformLocation(shaderProgram, "u_lightDirection");
-let ld = new Vector3([0.5, 3.0, 4.0]);
-ld.normalize();
-gl.uniform3fv(lightDirectionLoc, ld.elements);
+// let lightColorLoc = gl.getUniformLocation(shaderProgram, "u_lightColor");
+// gl.uniform3f(lightColorLoc, 1.0, 1.0, 1.0);
+// let lightDirectionLoc = gl.getUniformLocation(shaderProgram, "u_lightDirection");
+// let ld = new Vector3([0.5, 3.0, 4.0]);
+// ld.normalize();
+// gl.uniform3fv(lightDirectionLoc, ld.elements);
 
 // Normal Matrix
 let nm = new Matrix4();
@@ -126,7 +126,7 @@ gl.uniformMatrix4fv(nmLoc, false, nm.elements);
 
 // Spot light
 let lposLoc = gl.getUniformLocation(shaderProgram, 'u_lightPosition');
-gl.uniform3f(lposLoc, 0.0, 3.0, 4.0);
+gl.uniform3f(lposLoc, 20.0, 0.0, 10.0);
 
 let ambLoc = gl.getUniformLocation(shaderProgram, "u_ambientLight");
 gl.uniform3f(ambLoc, 0.1, 0.1, 0.1);
