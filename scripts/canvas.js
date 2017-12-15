@@ -61,7 +61,7 @@ gl.useProgram(shaderProgram);
 
 // let coloc = gl.getAttribLocation(shaderProgram, "a_Color");
 
-let mod = GenerateModel(1.8, 0.8, 4);
+let mod = GenerateModel(1.8, 0.8, 400);
 let vertices = mod.vertices;
 let normals = mod.normals;
 let colors = mod.color;
@@ -99,7 +99,7 @@ let model = new Matrix4();
 
 let view = new Matrix4();
 // view.setLookAt(0, 0, 5, 0, 0, -100, 0, 1, 0);
-view.setLookAt(4, 3, 2, 0, 1, 0, 0, 1, 0);
+view.setLookAt(8, 6, 2, 0, 1, 0, 0, 1, 0);
 gl.uniform3fv(shaderProgram.u_Camera, new Vector3([4, 3, 2]).elements);
 
 let proje = new Matrix4();
@@ -244,7 +244,7 @@ let imageTexture = gl.createTexture(); // Create Textrue
 let textureLoc = gl.getUniformLocation(shaderProgram, 'u_sampler');
 
 let skybox = gl.createTexture();
-let mapPath = './map/';
+let mapPath = './enmap/';
 
 let cube0 = new Image();
 cube0.src = mapPath + 'negx.jpg';
@@ -321,7 +321,7 @@ let move = () => {
 
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_COLOR_BIT);
     model.rotate(-10/1000*d, 0, 1, 0);
-    model.rotate(-60/1000*d, 1, 0, 0);
+    model.rotate(-20/1000*d, 1, 0, 0);
     // matrix.translate(0, 0, -1/1000*d);
 
 
