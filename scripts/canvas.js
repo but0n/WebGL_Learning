@@ -61,7 +61,7 @@ gl.useProgram(shaderProgram);
 
 // let coloc = gl.getAttribLocation(shaderProgram, "a_Color");
 
-let mod = GenerateModel(1.8, 0.8, 200);
+let mod = GenerateModel(1.8, 0.8, 4);
 let vertices = mod.vertices;
 let normals = mod.normals;
 let colors = mod.color;
@@ -77,6 +77,8 @@ shaderProgram.a_texCoord= gl.getAttribLocation(shaderProgram, "a_texCoord");
 attributeBuffer(shaderProgram.a_texCoord, texCs, 2, gl.FLOAT);
 
 shaderProgram.u_Camera = gl.getUniformLocation(shaderProgram, "u_Camera");
+
+shaderProgram.u_sky = gl.getUniformLocation(shaderProgram, "u_sky");
 
 
 
@@ -240,7 +242,47 @@ shader1.u_sampler = gl.getUniformLocation(shader1, "u_sampler");
 // Main Textrue
 let imageTexture = gl.createTexture(); // Create Textrue
 let textureLoc = gl.getUniformLocation(shaderProgram, 'u_sampler');
-// Get location
+
+let skybox = gl.createTexture();
+let mapPath = './map/';
+
+let cube0 = new Image();
+cube0.src = mapPath + 'negx.jpg';
+cube0.onload = () => {
+    gl.bindTexture(gl.TEXTURE_CUBE_MAP, skybox);
+    gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_X, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, cube0);
+}
+let cube1 = new Image();
+cube1.src = mapPath + 'negy.jpg';
+cube1.onload = () => {
+    gl.bindTexture(gl.TEXTURE_CUBE_MAP, skybox);
+    gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, cube1);
+}
+let cube2 = new Image();
+cube2.src = mapPath + 'negz.jpg';
+cube2.onload = () => {
+    gl.bindTexture(gl.TEXTURE_CUBE_MAP, skybox);
+    gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, cube2);
+}
+let cube3 = new Image();
+cube3.src = mapPath + 'posx.jpg';
+cube3.onload = () => {
+    gl.bindTexture(gl.TEXTURE_CUBE_MAP, skybox);
+    gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, cube3);
+}
+let cube4 = new Image();
+cube4.src = mapPath + 'posy.jpg';
+cube4.onload = () => {
+    gl.bindTexture(gl.TEXTURE_CUBE_MAP, skybox);
+    gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_Y, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, cube4);
+}
+let cube5 = new Image();
+cube5.src = mapPath + 'posz.jpg';
+cube5.onload = () => {
+    gl.bindTexture(gl.TEXTURE_CUBE_MAP, skybox);
+    gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_Z, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, cube5);
+    loadCubeMap(gl);
+}
 
 let image = new Image();
 image.src = './hello.png';
@@ -278,7 +320,7 @@ let move = () => {
     last_time = Date.now();
 
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_COLOR_BIT);
-    model.rotate(-60/1000*d, 0, 1, 0);
+    model.rotate(-10/1000*d, 0, 1, 0);
     model.rotate(-60/1000*d, 1, 0, 0);
     // matrix.translate(0, 0, -1/1000*d);
 
@@ -318,8 +360,21 @@ let move = () => {
     requestAnimationFrame(move);
 }
 // move();
-function drawOrigin() {
+function loadCubeMap(gl) {
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_COLOR_BIT);
 
+    // Configure
+    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_CUBE_MAP, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.activeTexture(gl.TEXTURE3);
+    gl.bindTexture(gl.TEXTURE_CUBE_MAP, skybox);
+    gl.uniform1i(shaderProgram.u_sky, 3);
+
+    // gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
+    // // Sending data
+    // gl.uniform1i(textureLoc, 0);
 }
 function bloom() {
     // NOTE: Toggle target buffer                       NOTE
