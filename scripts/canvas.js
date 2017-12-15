@@ -244,7 +244,7 @@ let imageTexture = gl.createTexture(); // Create Textrue
 let textureLoc = gl.getUniformLocation(shaderProgram, 'u_sampler');
 
 let skybox = gl.createTexture();
-let mapPath = './enmap/';
+let mapPath = './map/';
 
 let cube0 = new Image();
 cube0.src = mapPath + 'negx.jpg';
