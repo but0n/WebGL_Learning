@@ -88,7 +88,7 @@ shaderProgram.u_sky = gl.getUniformLocation(shaderProgram, "u_sky");
 
 
 // gl.clearColor(1.0, 1.0, 1.0, 1.0);
-gl.clearColor(0.1, 0.1, 0.1, 1.0);
+gl.clearColor(0.2, 0.2, 0.2, 1.0);
 gl.enable(gl.DEPTH_TEST);
 // gl.enable(gl.POLYGON_OFFSET_FILL);
 gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_COLOR_BIT);
@@ -245,7 +245,7 @@ let textureLoc = gl.getUniformLocation(shaderProgram, 'u_sampler');
 
 let skybox = gl.createTexture();
 // let mapPath = './blurmap/';
-let mapPath = './map/';
+let mapPath = './enmap/';
 
 let cube0 = new Image();
 cube0.src = mapPath + 'negx.jpg';
@@ -322,8 +322,8 @@ let move = () => {
 
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_COLOR_BIT);
     model.rotate(30/1000*d, 0, 1, 0);
-    model.rotate(-60/1000*d, 1, 0, 0);
-    model.rotate(30/1000*d, 0, 1, 0);
+    model.rotate(-50/1000*d, 1, 0, 0);
+    model.rotate(50/1000*d, 0, 1, 0);
 
     // matrix.translate(0, 0, -1/1000*d);
 
