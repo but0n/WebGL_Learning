@@ -61,7 +61,7 @@ gl.useProgram(shaderProgram);
 
 // let coloc = gl.getAttribLocation(shaderProgram, "a_Color");
 
-let mod = GenerateModel(1.8, 0.8, 400);
+let mod = GenerateModel(1.8, 0.8, 500);
 let vertices = mod.vertices;
 let normals = mod.normals;
 let colors = mod.color;
@@ -88,7 +88,7 @@ shaderProgram.u_sky = gl.getUniformLocation(shaderProgram, "u_sky");
 
 
 // gl.clearColor(1.0, 1.0, 1.0, 1.0);
-gl.clearColor(0.3, 1.0, 0.6, 1.0);
+gl.clearColor(0.1, 0.1, 0.1, 1.0);
 gl.enable(gl.DEPTH_TEST);
 // gl.enable(gl.POLYGON_OFFSET_FILL);
 gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_COLOR_BIT);
@@ -99,7 +99,7 @@ let model = new Matrix4();
 
 let view = new Matrix4();
 // view.setLookAt(0, 0, 5, 0, 0, -100, 0, 1, 0);
-view.setLookAt(8, 6, 2, 0, 1, 0, 0, 1, 0);
+view.setLookAt(2, 3, 2, 0, 1, 0, 0, 1, 0);
 gl.uniform3fv(shaderProgram.u_Camera, new Vector3([4, 3, 2]).elements);
 
 let proje = new Matrix4();
@@ -128,7 +128,7 @@ gl.uniformMatrix4fv(nmLoc, false, nm.elements);
 
 // Spot light
 let lposLoc = gl.getUniformLocation(shaderProgram, 'u_lightPosition');
-gl.uniform3f(lposLoc, 20.0, 0.0, 10.0);
+gl.uniform3f(lposLoc, 23.0, -4.0, 10.0);
 
 let ambLoc = gl.getUniformLocation(shaderProgram, "u_ambientLight");
 gl.uniform3f(ambLoc, 0.1, 0.1, 0.1);
@@ -244,6 +244,7 @@ let imageTexture = gl.createTexture(); // Create Textrue
 let textureLoc = gl.getUniformLocation(shaderProgram, 'u_sampler');
 
 let skybox = gl.createTexture();
+// let mapPath = './blurmap/';
 let mapPath = './map/';
 
 let cube0 = new Image();
@@ -320,8 +321,10 @@ let move = () => {
     last_time = Date.now();
 
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_COLOR_BIT);
-    model.rotate(-10/1000*d, 0, 1, 0);
-    model.rotate(-20/1000*d, 1, 0, 0);
+    model.rotate(30/1000*d, 0, 1, 0);
+    model.rotate(-60/1000*d, 1, 0, 0);
+    model.rotate(30/1000*d, 0, 1, 0);
+
     // matrix.translate(0, 0, -1/1000*d);
 
 
