@@ -1,29 +1,29 @@
 
 let gl = document.getElementsByClassName('ctx').item(0).getContext('webgl');
 
-let rad = 1;
-let sigma = rad*3.3;
-let sigma2 = 2.0 * sigma * sigma;
-let sigmap = sigma2 * Math.PI;
-let wsum = 0;
-let result = [];
-for(let i = -rad; i <= rad; i++) {
-    for(let j = -rad; j <= rad; j++) {
-        let w = Math.exp(-(i*i + j*j) / sigma2) / sigmap;
-        wsum += w;
-    }
-}
-console.log('sum:\t' + wsum);
-for(let i = -rad; i <= rad; i++) {
-    for(let j = -rad; j <= rad; j++) {
-        let w = Math.exp(-(i*i + j*j) / sigma2) / sigmap / wsum;
-        if(j>=0 && i>=0) {
-            console.log('('+j+','+i+')\t' + w);
-            result.push(w);}
-    }
-    console.log('\n');
-}
-console.log(result);
+// let rad = 1;
+// let sigma = rad*3.3;
+// let sigma2 = 2.0 * sigma * sigma;
+// let sigmap = sigma2 * Math.PI;
+// let wsum = 0;
+// let result = [];
+// for(let i = -rad; i <= rad; i++) {
+//     for(let j = -rad; j <= rad; j++) {
+//         let w = Math.exp(-(i*i + j*j) / sigma2) / sigmap;
+//         wsum += w;
+//     }
+// }
+// console.log('sum:\t' + wsum);
+// for(let i = -rad; i <= rad; i++) {
+//     for(let j = -rad; j <= rad; j++) {
+//         let w = Math.exp(-(i*i + j*j) / sigma2) / sigmap / wsum;
+//         if(j>=0 && i>=0) {
+//             console.log('('+j+','+i+')\t' + w);
+//             result.push(w);}
+//     }
+//     console.log('\n');
+// }
+// console.log(result);
 
 
 function getShader(e, GL_ctx) {
@@ -538,6 +538,39 @@ function GenerateModel(height, radius, sagment) {
     }
     for(let i = 0; i < vet.length/3; i++)
         index.push(i);
+
+    return {
+        vertices: new Float32Array(vet),
+        map: new Uint16Array(index),
+        color: new Float32Array(col),
+        texCoords: new Float32Array(tex),
+        normals: new Float32Array(nor)
+    };
+}
+GenerateSphere(1, 4);
+function GenerateSphere(radius, sagment) {
+    this.r = (c) => Math.PI*c/180.0
+    this.cos = (c) => Math.cos(this.r(c));
+    this.sin = (c) => Math.sin(this.r(c));
+// Vertex
+    let del = 360/sagment;
+    let vet = [];
+    let index = [];
+    let nor = [];
+    let col = [];
+    let tex = [];
+    let n, a, b, c, d;
+
+    for(let w = 0; w < 360; w+=del) {
+        for(let t = 0; t < 360; t+=del) {
+            a = [radius * this.sin(t) * this.cos(w), radius * this.cos(t), radius * this.sin(t) * this.sin(w)];
+            b = [radius * this.sin(t+del) * this.cos(w), radius * this.cos(t+del), radius * this.sin(t+del) * this.sin(w)];
+            c = [radius * this.sin(t+del) * this.cos(w+del), radius * this.cos(t+del), radius * this.sin(t+del) * this.sin(w+del)];
+            d = [radius * this.sin(t) * this.cos(w + del), radius * this.cos(t), radius * this.sin(t) * this.sin(w + del)];
+
+        }
+    }
+
 
     return {
         vertices: new Float32Array(vet),
