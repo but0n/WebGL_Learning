@@ -61,7 +61,8 @@ gl.useProgram(shaderProgram);
 
 // let coloc = gl.getAttribLocation(shaderProgram, "a_Color");
 
-let mod = GenerateModel(1.8, 0.8, 500);
+// let mod = GenerateModel(1.8, 0.8, 500);
+let mod = GenerateSphere(2.0, 140);
 let vertices = mod.vertices;
 let normals = mod.normals;
 let colors = mod.color;
@@ -73,8 +74,8 @@ attributeBuffer(shaderProgram.a_Position, vertices, 3, gl.FLOAT);
 shaderProgram.a_Normal = gl.getAttribLocation(shaderProgram, "a_Normal");
 attributeBuffer(shaderProgram.a_Normal, normals, 3, gl.FLOAT);
 
-shaderProgram.a_texCoord= gl.getAttribLocation(shaderProgram, "a_texCoord");
-attributeBuffer(shaderProgram.a_texCoord, texCs, 2, gl.FLOAT);
+// shaderProgram.a_texCoord= gl.getAttribLocation(shaderProgram, "a_texCoord");
+// attributeBuffer(shaderProgram.a_texCoord, texCs, 2, gl.FLOAT);
 
 shaderProgram.u_Camera = gl.getUniformLocation(shaderProgram, "u_Camera");
 
@@ -99,7 +100,7 @@ let model = new Matrix4();
 
 let view = new Matrix4();
 // view.setLookAt(0, 0, 5, 0, 0, -100, 0, 1, 0);
-view.setLookAt(2, 3, 2, 0, 1, 0, 0, 1, 0);
+view.setLookAt(10, 0, 10, 0, 0, 0, 0, 1, 0);
 gl.uniform3fv(shaderProgram.u_Camera, new Vector3([4, 3, 2]).elements);
 
 let proje = new Matrix4();
@@ -114,10 +115,10 @@ gl.uniformMatrix4fv(projeLocation, false, proje.elements);
 // Light uniform
 // let lightColorLoc = gl.getUniformLocation(shaderProgram, "u_lightColor");
 // gl.uniform3f(lightColorLoc, 1.0, 1.0, 1.0);
-// let lightDirectionLoc = gl.getUniformLocation(shaderProgram, "u_lightDirection");
-// let ld = new Vector3([0.5, 3.0, 4.0]);
-// ld.normalize();
-// gl.uniform3fv(lightDirectionLoc, ld.elements);
+let lightDirectionLoc = gl.getUniformLocation(shaderProgram, "u_lightDirection");
+let ld = new Vector3([-9.5, 3.0, -30.0]);
+ld.normalize();
+gl.uniform3fv(lightDirectionLoc, ld.elements);
 
 // Normal Matrix
 let nm = new Matrix4();
@@ -128,7 +129,7 @@ gl.uniformMatrix4fv(nmLoc, false, nm.elements);
 
 // Spot light
 let lposLoc = gl.getUniformLocation(shaderProgram, 'u_lightPosition');
-gl.uniform3f(lposLoc, 23.0, -4.0, 10.0);
+gl.uniform3f(lposLoc, -30.0, 0.0, 0.0);
 
 let ambLoc = gl.getUniformLocation(shaderProgram, "u_ambientLight");
 gl.uniform3f(ambLoc, 0.1, 0.1, 0.1);
@@ -245,7 +246,7 @@ let textureLoc = gl.getUniformLocation(shaderProgram, 'u_sampler');
 
 let skybox = gl.createTexture();
 // let mapPath = './blurmap/';
-let mapPath = './enmap/';
+let mapPath = './map/';
 
 let cube0 = new Image();
 cube0.src = mapPath + 'negx.jpg';
@@ -307,6 +308,7 @@ image.onload = () => {
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, vmapBuffer);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, mod.map, gl.STATIC_DRAW);
     gl.drawElements(gl.TRIANGLES, mod.map.length, gl.UNSIGNED_SHORT, 0); // Render
+    // gl.drawElements(gl.TRIANGLES, mod.map.length, gl.UNSIGNED_SHORT, 0); // Render
     // move();
 // return;
             // Effect - bloom
@@ -321,9 +323,9 @@ let move = () => {
     last_time = Date.now();
 
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_COLOR_BIT);
-    model.rotate(30/1000*d, 0, 1, 0);
+    // model.rotate(80/1000*d, 0, 1, 0);
     model.rotate(-50/1000*d, 1, 0, 0);
-    model.rotate(50/1000*d, 0, 1, 0);
+    model.rotate(20/1000*d, 0, 1, 0);
 
     // matrix.translate(0, 0, -1/1000*d);
 
@@ -336,7 +338,7 @@ let move = () => {
 
     attributeBuffer(shaderProgram.a_Normal, normals, 3, gl.FLOAT);
 
-    attributeBuffer(shaderProgram.a_texCoord, texCs, 2, gl.FLOAT);
+    // attributeBuffer(shaderProgram.a_texCoord, texCs, 2, gl.FLOAT);
 
     var vmapBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, vmapBuffer);
@@ -353,8 +355,9 @@ let move = () => {
     nm.setInverseOf(model);
     nm.transpose();
     gl.uniformMatrix4fv(nmLoc, false, nm.elements);
-
     gl.drawElements(gl.TRIANGLES, mod.map.length, gl.UNSIGNED_SHORT, 0); // Render
+
+    // gl.drawElements(gl.TRIANGLES, mod.map.length, gl.UNSIGNED_SHORT, 0); // Render
 
     console.log('FPS:'+Math.floor(1000/d));
 
@@ -547,7 +550,7 @@ function GenerateModel(height, radius, sagment) {
         normals: new Float32Array(nor)
     };
 }
-GenerateSphere(1, 4);
+
 function GenerateSphere(radius, sagment) {
     this.r = (c) => Math.PI*c/180.0
     this.cos = (c) => Math.cos(this.r(c));
@@ -562,18 +565,33 @@ function GenerateSphere(radius, sagment) {
     let n, a, b, c, d;
 
     for(let w = 0; w < 360; w+=del) {
-        for(let t = 0; t < 360; t+=del) {
+        for(let t = 0; t < 180; t+=del) {
             a = [radius * this.sin(t) * this.cos(w), radius * this.cos(t), radius * this.sin(t) * this.sin(w)];
             b = [radius * this.sin(t+del) * this.cos(w), radius * this.cos(t+del), radius * this.sin(t+del) * this.sin(w)];
             c = [radius * this.sin(t+del) * this.cos(w+del), radius * this.cos(t+del), radius * this.sin(t+del) * this.sin(w+del)];
-            // vet.push(a, b, c);
-            if((t==0)||t==360-del) { // top or bottom spot
+            vet.push(a[0], a[1], a[2]);
+            vet.push(b[0], b[1], b[2]);
+            vet.push(c[0], c[1], c[2]);
+            let n = cross(substractVectors(a, c), substractVectors(b, a));
+            nor.push(n[0], n[1], n[2]);
+            nor.push(n[0], n[1], n[2]);
+            nor.push(n[0], n[1], n[2]);
+            if((t!=0) && t!=(180-del)) { // top or bottom spot
                 d = [radius * this.sin(t) * this.cos(w + del), radius * this.cos(t), radius * this.sin(t) * this.sin(w + del)];
+                vet.push(a[0], a[1], a[2]);
+                vet.push(c[0], c[1], c[2]);
+                vet.push(d[0], d[1], d[2]);
+
+                let n = cross(substractVectors(c, d), substractVectors(d, a));
+                nor.push(n[0], n[1], n[2]);
+                nor.push(n[0], n[1], n[2]);
+                nor.push(n[0], n[1], n[2]);
             }
 
         }
     }
-
+    for(let i = 0; i < vet.length/3; i++)
+        index.push(i);
 
     return {
         vertices: new Float32Array(vet),
