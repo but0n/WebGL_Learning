@@ -62,7 +62,7 @@ gl.useProgram(shaderProgram);
 // let coloc = gl.getAttribLocation(shaderProgram, "a_Color");
 
 // let mod = GenerateModel(1.8, 0.8, 500);
-let mod = GenerateSphere(2.0, 140);
+let mod = GenerateSphere(3.4, 140);
 let vertices = mod.vertices;
 let normals = mod.normals;
 let colors = mod.color;
@@ -359,7 +359,7 @@ let move = () => {
 
     // gl.drawElements(gl.TRIANGLES, mod.map.length, gl.UNSIGNED_SHORT, 0); // Render
 
-    console.log('FPS:'+Math.floor(1000/d));
+    // console.log('FPS:'+Math.floor(1000/d));
 
     // bloom();
 
@@ -565,7 +565,7 @@ function GenerateSphere(radius, sagment) {
     let n, a, b, c, d;
 
     for(let w = 0; w < 360; w+=del) {
-        for(let t = 0; t < 180; t+=del) {
+        for(let t = 0; t <= 180; t+=del) {
             a = [radius * this.sin(t) * this.cos(w), radius * this.cos(t), radius * this.sin(t) * this.sin(w)];
             b = [radius * this.sin(t+del) * this.cos(w), radius * this.cos(t+del), radius * this.sin(t+del) * this.sin(w)];
             c = [radius * this.sin(t+del) * this.cos(w+del), radius * this.cos(t+del), radius * this.sin(t+del) * this.sin(w+del)];
