@@ -313,11 +313,63 @@ image.onload = () => {
 // return;
             // Effect - bloom
     // bloom();
-
-
 };
-
+let gView = {};
+gView.x = 0;
+gView.y = 0;
+gView.status = 0;
 let last_time = Date.now();
+let drag = (e) => {
+    gView.x = e.clientX;
+    gView.y = e.clientY;
+    gView.status = 1;
+}
+let stopDrag = (e) => {
+    gView.status = 0;
+}
+let mousemove = (e) => {
+    if(gView.status == 1) {
+        let delX = e.clientX - gView.x;
+        let delY = e.clientY - gView.y;
+        model.rotate(delX/5, 0, 1, 0);
+        model.rotate(delY/5, 0, 0, 1);
+        // model.rotate(20/1000*d, 0, 1, 0);
+
+        // matrix.translate(0, 0, -1/1000*d);
+
+
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_COLOR_BIT);
+        gl.useProgram(shaderProgram);
+        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+        gl.activeTexture(gl.TEXTURE1);
+        attributeBuffer(shaderProgram.a_Position, vertices, 3, gl.FLOAT);
+
+        attributeBuffer(shaderProgram.a_Normal, normals, 3, gl.FLOAT);
+
+
+        var vmapBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, vmapBuffer);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, mod.map, gl.STATIC_DRAW);
+        // Configure
+        // Sending data
+        gl.uniform1i(textureLoc, 1);
+
+        gl.activeTexture(gl.TEXTURE1);
+    // Vertex remap index
+
+
+        gl.uniformMatrix4fv(modelLocation, false, model.elements);
+        nm.setInverseOf(model);
+        nm.transpose();
+        gl.uniformMatrix4fv(nmLoc, false, nm.elements);
+        gl.drawElements(gl.TRIANGLES, mod.map.length, gl.UNSIGNED_SHORT, 0); // Render
+        gView.x = e.clientX;
+        gView.y = e.clientY;
+
+    }
+
+}
+
 let move = () => {
     let d = Date.now() - last_time;
     last_time = Date.now();
@@ -363,7 +415,7 @@ let move = () => {
 
     // bloom();
 
-    requestAnimationFrame(move);
+    // requestAnimationFrame(move);
 }
 // move();
 function loadCubeMap(gl) {

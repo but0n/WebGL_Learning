@@ -8,7 +8,7 @@
     </head>
     <body>
 
-        <canvas class="ctx" width="720px" height="720px" onclick="move()"></canvas>
+        <canvas class="ctx" width="720px" height="720px" onmousedown="drag(event)" onmouseup="stopDrag(event)" onmousemove="mousemove(event)"></canvas>
 
         <script id="Shader-vs" type="x-shader/x-vertex">
             attribute vec3 a_Position;         // 每个顶点的坐标
