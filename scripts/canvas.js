@@ -565,7 +565,7 @@ function GenerateSphere(radius, sagment) {
     let n, a, b, c, d;
 
     for(let w = 0; w < 360; w+=del) {
-        for(let t = 0; t < 180; t+=del) {
+        for(let t = 0; t <= 180; t+=del) {
             a = [radius * this.sin(t) * this.cos(w), radius * this.cos(t), radius * this.sin(t) * this.sin(w)];
             b = [radius * this.sin(t+del) * this.cos(w), radius * this.cos(t+del), radius * this.sin(t+del) * this.sin(w)];
             c = [radius * this.sin(t+del) * this.cos(w+del), radius * this.cos(t+del), radius * this.sin(t+del) * this.sin(w+del)];
