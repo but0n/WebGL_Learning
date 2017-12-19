@@ -71,7 +71,7 @@
 
         // Distribution
                 float D;
-                float roughness = 0.1;
+                float roughness = 0.21;
                 float alpha = roughness * roughness;
                 float alphaSq = alpha * alpha;
                 float NdotH = clamp(dot(n, h), 0.001, 1.0);
@@ -101,8 +101,8 @@
 
                 // gl_FragColor = vec4(F, 1.0);
                 // gl_FragColor = vec4(specularContrib, 1.0);
-                // gl_FragColor = vec4(specularContrib * specularColor, 1.0);
-                gl_FragColor = vec4(diffuseContrib   + specularColor * (specularContrib + F), 1.0);
+                // gl_FragColor = vec4(specularColor, 1.0);
+                gl_FragColor = vec4(diffuseContrib *(1.0-F)   + specularColor * (specularContrib + F), 1.0);
                 // gl_FragColor = vec4(diffuseContrib * (1.0-F) + specularColor * F , 1.0);
                 // gl_FragColor = vec4(diffuseContrib + specularColor * (specularContrib), 1.0);
             }
