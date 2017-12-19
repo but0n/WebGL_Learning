@@ -324,7 +324,7 @@ let move = () => {
 
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_COLOR_BIT);
     // model.rotate(80/1000*d, 0, 1, 0);
-    model.rotate(-50/1000*d, 1, 0, 0);
+    model.rotate(30/1000*d, 1, 0, 0);
     model.rotate(20/1000*d, 0, 1, 0);
 
     // matrix.translate(0, 0, -1/1000*d);
