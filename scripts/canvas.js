@@ -62,7 +62,7 @@ gl.useProgram(shaderProgram);
 // let coloc = gl.getAttribLocation(shaderProgram, "a_Color");
 
 // let mod = GenerateModel(1.8, 0.8, 500);
-let mod = GenerateSphere(3.4, 40);
+let mod = GenerateSphere(1.4, 40);
 let vertices = mod.vertices;
 let normals = mod.normals;
 let colors = mod.color;
@@ -100,8 +100,8 @@ let model = new Matrix4();
 
 let view = new Matrix4();
 // view.setLookAt(0, 0, 5, 0, 0, -100, 0, 1, 0);
-view.setLookAt(10, 0, 10, 0, 0, 0, 0, 1, 0);
-gl.uniform3fv(shaderProgram.u_Camera, new Vector3([10, 0, 10]).elements);
+view.setLookAt(0, 0, 10, 0, 0, 0, 0, 1, 0);
+gl.uniform3fv(shaderProgram.u_Camera, new Vector3([0, 0, 10]).elements);
 
 let proje = new Matrix4();
 proje.setPerspective(30, 1, 1, 100);
@@ -236,8 +236,13 @@ shader1.a_Position = gl.getAttribLocation(shader1, "a_Position");
 shader1.a_texCoord = gl.getAttribLocation(shader1, "a_texCoord");
 shader1.u_sampler = gl.getUniformLocation(shader1, "u_sampler");
 
+shader1.u_ModelMatrix = gl.getUniformLocation(shader1, "u_ModelMatrix");
+shader1.u_ViewMatrix = gl.getUniformLocation(shader1, "u_ViewMatrix");
+shader1.u_ProjeMatrix = gl.getUniformLocation(shader1, "u_ProjeMatrix");
 
-// gl.useProgram(shader1);
+
+
+
 
 
 // Main Textrue
@@ -249,36 +254,49 @@ let skybox = gl.createTexture();
 let mapPath = './map/';
 
 let cube0 = new Image();
+let cube0Texture = gl.createTexture();
 cube0.src = mapPath + 'negx.jpg';
 cube0.onload = () => {
     gl.bindTexture(gl.TEXTURE_CUBE_MAP, skybox);
     gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_X, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, cube0);
+
+            gl.activeTexture(gl.TEXTURE1);
+            gl.bindTexture(gl.TEXTURE_2D, cube0Texture);
+
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+            gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, cube0);
+            // gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
 }
 let cube1 = new Image();
+let cube1Texture = gl.createTexture();
 cube1.src = mapPath + 'negy.jpg';
 cube1.onload = () => {
     gl.bindTexture(gl.TEXTURE_CUBE_MAP, skybox);
     gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, cube1);
 }
 let cube2 = new Image();
+let cube2Texture = gl.createTexture();
 cube2.src = mapPath + 'negz.jpg';
 cube2.onload = () => {
     gl.bindTexture(gl.TEXTURE_CUBE_MAP, skybox);
     gl.texImage2D(gl.TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, cube2);
 }
 let cube3 = new Image();
+let cube3Texture = gl.createTexture();
 cube3.src = mapPath + 'posx.jpg';
 cube3.onload = () => {
     gl.bindTexture(gl.TEXTURE_CUBE_MAP, skybox);
     gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_X, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, cube3);
 }
 let cube4 = new Image();
+let cube4Texture = gl.createTexture();
 cube4.src = mapPath + 'posy.jpg';
 cube4.onload = () => {
     gl.bindTexture(gl.TEXTURE_CUBE_MAP, skybox);
     gl.texImage2D(gl.TEXTURE_CUBE_MAP_POSITIVE_Y, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, cube4);
 }
 let cube5 = new Image();
+let cube5Texture = gl.createTexture();
 cube5.src = mapPath + 'posz.jpg';
 cube5.onload = () => {
     gl.bindTexture(gl.TEXTURE_CUBE_MAP, skybox);
@@ -289,6 +307,8 @@ cube5.onload = () => {
 let image = new Image();
 image.src = './hello.png';
 image.onload = () => {
+    gl.useProgram(shaderProgram);
+
     gl.bindFramebuffer(gl.FRAMEBUFFER, null);      // Render to base framebuffer
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_COLOR_BIT);
 
@@ -308,6 +328,14 @@ image.onload = () => {
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, vmapBuffer);
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, mod.map, gl.STATIC_DRAW);
     gl.drawElements(gl.TRIANGLES, mod.map.length, gl.UNSIGNED_SHORT, 0); // Render
+
+
+    gl.useProgram(shader1);
+
+    gl.uniformMatrix4fv(shader1.u_ModelMatrix, false, model.elements);
+    gl.uniformMatrix4fv(shader1.u_ViewMatrix, false, view.elements);
+    gl.uniformMatrix4fv(shader1.u_ProjeMatrix, false, proje.elements);
+    drawSkyBox();
     // gl.drawElements(gl.TRIANGLES, mod.map.length, gl.UNSIGNED_SHORT, 0); // Render
     // move();
 // return;
@@ -329,19 +357,18 @@ let stopDrag = (e) => {
 }
 let mousemove = (e) => {
     if(gView.status == 1) {
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_COLOR_BIT);
+
         let delX = e.clientX - gView.x;
         let delY = e.clientY - gView.y;
         model.rotate(delX/5, 0, 1, 0);
-        model.rotate(delY/5, 0, 0, 1);
+        model.rotate(delY/5, 1, 0, 0);
         // model.rotate(20/1000*d, 0, 1, 0);
 
         // matrix.translate(0, 0, -1/1000*d);
 
 
-        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_COLOR_BIT);
         gl.useProgram(shaderProgram);
-        gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-        gl.activeTexture(gl.TEXTURE1);
         attributeBuffer(shaderProgram.a_Position, vertices, 3, gl.FLOAT);
 
         attributeBuffer(shaderProgram.a_Normal, normals, 3, gl.FLOAT);
@@ -352,9 +379,7 @@ let mousemove = (e) => {
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, mod.map, gl.STATIC_DRAW);
         // Configure
         // Sending data
-        gl.uniform1i(textureLoc, 1);
 
-        gl.activeTexture(gl.TEXTURE1);
     // Vertex remap index
 
 
@@ -363,10 +388,45 @@ let mousemove = (e) => {
         nm.transpose();
         gl.uniformMatrix4fv(nmLoc, false, nm.elements);
         gl.drawElements(gl.TRIANGLES, mod.map.length, gl.UNSIGNED_SHORT, 0); // Render
+
+        drawSkyBox();
+
+
         gView.x = e.clientX;
         gView.y = e.clientY;
-
     }
+
+}
+
+let drawSkyBox = () => {
+    let subMatrix = new Matrix4();
+    subMatrix.setTranslate(0, 0, 0);
+    subMatrix.multiply(model);
+
+    gl.useProgram(shader1);
+    gl.uniformMatrix4fv(shader1.u_ModelMatrix, false, subMatrix.elements);
+
+    gl.uniform1i(shader1.u_sampler, 1);
+    attributeBuffer(shader1.a_Position, new Float32Array([  // Vertex Postion
+        -20, 20, 0.0,
+        20, 20, 0.0,
+        20, -20, 0.0,
+        -20, -20, 0.0
+    ]), 3, gl.FLOAT);
+    attributeBuffer(shader1.a_texCoord, new Float32Array([  // TexCoord
+        0.0, 0.0,
+        1.0, 0.0,
+        1.0, 1.0,
+        0.0, 1.0,
+    ]), 2, gl.FLOAT);
+    let buf = gl.createBuffer();
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array([
+        0, 1, 2,
+        0, 2, 3
+    ]), gl.STATIC_DRAW);
+
+    gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0); // Render
 
 }
 
