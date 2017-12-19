@@ -101,7 +101,7 @@ let model = new Matrix4();
 let view = new Matrix4();
 // view.setLookAt(0, 0, 5, 0, 0, -100, 0, 1, 0);
 view.setLookAt(10, 0, 10, 0, 0, 0, 0, 1, 0);
-gl.uniform3fv(shaderProgram.u_Camera, new Vector3([4, 3, 2]).elements);
+gl.uniform3fv(shaderProgram.u_Camera, new Vector3([10, 0, 10]).elements);
 
 let proje = new Matrix4();
 proje.setPerspective(30, 1, 1, 100);
