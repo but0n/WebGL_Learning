@@ -56,7 +56,7 @@
                 // vec4 color = texture2D(u_sampler, v_texCoord);
 
                 vec3 n = normalize(v_normal);
-                vec3 v = normalize((v_model * vec4(u_Camera - v_pos, 0.0)).xyz);
+                vec3 v = normalize(( vec4(u_Camera - v_pos, 0.0)).xyz);
                 // vec3 v = normalize(u_Camera - v_pos);
                 // vec3 l = normalize(u_lightDirection);
                 vec3 l = normalize((v_model * vec4(u_lightDirection, 0.0)).xyz);
@@ -64,14 +64,14 @@
 
         // Fresnel - Specular Reflection
                 vec3 F;
-                vec3 f0 = vec3(0.03);
+                vec3 f0 = vec3(0.01);
                 // float VdotH = dot(v, h);
-                float VdotH = clamp(dot(v, h), 0.0, 1.0);
+                float VdotH = clamp(dot(v, n), 0.0, 1.0);
                 F = f0 + (1.0 - f0) * pow(1.0 - VdotH, 2.0);
 
         // Distribution
                 float D;
-                float roughness = 0.21;
+                float roughness = 0.1;
                 float alpha = roughness * roughness;
                 float alphaSq = alpha * alpha;
                 float NdotH = clamp(dot(n, h), 0.001, 1.0);
@@ -93,16 +93,16 @@
                 float LdotH = dot(l, h);
                 float f90 = 2.0 * LdotH * LdotH * roughness - 0.5;
                 vec3 color = vec3(0.0, 0.4, 0.8);
-                vec3 specularColor = textureCube(u_sky, reflect(n,v)).rgb;
+                vec3 specularColor = textureCube(u_sky, (v_model *vec4(reflect(n,v), 1.0)).xyz).rgb;
                 color = (color) * (1.0 + f90 * pow((1.0 - NdotL), 5.0)) * (1.0 + f90 * pow((1.0 - NdotV), 5.0));
                 // vec3 diffuseContrib = (1.0 - F) * color;
                 // vec3 diffuseContrib = vec3(0.3, 0.8, 0.9) * max(dot(n, l), 0.01); // Lamber
-                vec3 diffuseContrib = vec3(0.2, 0.8, 1.0) * (1.0-F);
+                vec3 diffuseContrib = vec3(0.1, 0.6, 1.0);
 
                 // gl_FragColor = vec4(F, 1.0);
                 // gl_FragColor = vec4(specularContrib, 1.0);
                 // gl_FragColor = vec4(specularContrib * specularColor, 1.0);
-                gl_FragColor = vec4(diffuseContrib + specularColor * (specularContrib+F), 1.0);
+                gl_FragColor = vec4(diffuseContrib   + specularColor * (specularContrib + F), 1.0);
                 // gl_FragColor = vec4(diffuseContrib * (1.0-F) + specularColor * F , 1.0);
                 // gl_FragColor = vec4(diffuseContrib + specularColor * (specularContrib), 1.0);
             }
