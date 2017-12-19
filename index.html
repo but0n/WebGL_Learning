@@ -99,7 +99,7 @@
                 // vec3 diffuseContrib = vec3(0.3, 0.8, 0.9) * max(dot(n, l), 0.1); // Lamber
                 vec3 diffuseContrib = vec3(0.2, 0.5, 0.8);
 
-                gl_FragColor = vec4((1.0 -F ) * diffuseContrib + specularColor * D * F * G / (4.0 * NdotL * NdotV), 1.0);
+                gl_FragColor = vec4(v_normal, 1.0);
                 // gl_FragColor = vec4(specularContrib * specularColor, 1.0);
                 // gl_FragColor = vec4(diffuseContrib * (1.0-F) + specularColor * (specularContrib+F), 1.0);
                 // gl_FragColor = vec4(diffuseContrib * (1.0-F) + specularColor * F , 1.0);

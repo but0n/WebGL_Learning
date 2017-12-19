@@ -62,7 +62,7 @@ gl.useProgram(shaderProgram);
 // let coloc = gl.getAttribLocation(shaderProgram, "a_Color");
 
 // let mod = GenerateModel(1.8, 0.8, 500);
-let mod = GenerateSphere(3.4, 140);
+let mod = GenerateSphere(3.4, 40);
 let vertices = mod.vertices;
 let normals = mod.normals;
 let colors = mod.color;
@@ -565,16 +565,18 @@ function GenerateSphere(radius, sagment) {
     let n, a, b, c, d;
 
     for(let w = 0; w < 360; w+=del) {
-        for(let t = 0; t <= 180; t+=del) {
+        for(let t = 0; t < 180; t+=del) {
             a = [radius * this.sin(t) * this.cos(w), radius * this.cos(t), radius * this.sin(t) * this.sin(w)];
             b = [radius * this.sin(t+del) * this.cos(w), radius * this.cos(t+del), radius * this.sin(t+del) * this.sin(w)];
             c = [radius * this.sin(t+del) * this.cos(w+del), radius * this.cos(t+del), radius * this.sin(t+del) * this.sin(w+del)];
             vet.push(a[0], a[1], a[2]);
             vet.push(b[0], b[1], b[2]);
             vet.push(c[0], c[1], c[2]);
-            let n = cross(substractVectors(a, c), substractVectors(b, a));
+            let n = substractVectors(a, [0, 0, 0]);
             nor.push(n[0], n[1], n[2]);
+            n = substractVectors(b, [0, 0, 0]);
             nor.push(n[0], n[1], n[2]);
+            n = substractVectors(c, [0, 0, 0]);
             nor.push(n[0], n[1], n[2]);
             if((t!=0) && t!=(180-del)) { // top or bottom spot
                 d = [radius * this.sin(t) * this.cos(w + del), radius * this.cos(t), radius * this.sin(t) * this.sin(w + del)];
@@ -582,9 +584,11 @@ function GenerateSphere(radius, sagment) {
                 vet.push(c[0], c[1], c[2]);
                 vet.push(d[0], d[1], d[2]);
 
-                let n = cross(substractVectors(c, d), substractVectors(d, a));
+                let n = substractVectors(a, [0, 0, 0]);
                 nor.push(n[0], n[1], n[2]);
+                n = substractVectors(c, [0, 0, 0]);
                 nor.push(n[0], n[1], n[2]);
+                n = substractVectors(d, [0, 0, 0]);
                 nor.push(n[0], n[1], n[2]);
             }
 
