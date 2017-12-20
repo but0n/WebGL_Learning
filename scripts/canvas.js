@@ -62,7 +62,7 @@ gl.useProgram(shaderProgram);
 // let coloc = gl.getAttribLocation(shaderProgram, "a_Color");
 
 // let mod = GenerateModel(1.8, 0.8, 500);
-let mod = GenerateSphere(1.4, 40);
+let mod = GenerateSphere(2.4, 40);
 let vertices = mod.vertices;
 let normals = mod.normals;
 let colors = mod.color;
@@ -254,7 +254,7 @@ shaderProgram.textureLoc = gl.getUniformLocation(shaderProgram, 'u_sampler');
 shaderProgram.uvNormal = gl.getUniformLocation(shaderProgram, 'uv_Normal');
 let meshNormalTexture = gl.createTexture();
 let meshNormal = new Image();
-meshNormal.src = './meshes/mesh1/normal.png';
+meshNormal.src = './meshes/mesh4/normal.png';
 meshNormal.onload = () => {
     gl.useProgram(shaderProgram);
 
@@ -271,7 +271,7 @@ meshNormal.onload = () => {
 shaderProgram.uvBasecolor = gl.getUniformLocation(shaderProgram, 'uv_Basecolor');
 let meshBasecolorTexture = gl.createTexture();
 let meshBasecolor = new Image();
-meshBasecolor.src = './meshes/mesh1/basecolor.png';
+meshBasecolor.src = './meshes/mesh4/basecolor.png';
 meshBasecolor.onload = () => {
     gl.useProgram(shaderProgram);
 
@@ -288,7 +288,7 @@ meshBasecolor.onload = () => {
 shaderProgram.uvMetallic = gl.getUniformLocation(shaderProgram, 'uv_Metallic');
 let meshMetallicTexture = gl.createTexture();
 let meshMetallic = new Image();
-meshMetallic.src = './meshes/mesh1/metallic.png';
+meshMetallic.src = './meshes/mesh4/metallic.png';
 meshMetallic.onload = () => {
     gl.useProgram(shaderProgram);
 
@@ -305,7 +305,7 @@ meshMetallic.onload = () => {
 shaderProgram.uvRoughness = gl.getUniformLocation(shaderProgram, 'uv_Roughness');
 let meshRoughnessTexture = gl.createTexture();
 let meshRoughness = new Image();
-meshRoughness.src = './meshes/mesh1/roughness.png';
+meshRoughness.src = './meshes/mesh4/roughness.png';
 meshRoughness.onload = () => {
     gl.useProgram(shaderProgram);
 
