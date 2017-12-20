@@ -124,7 +124,8 @@
                 // gl_FragColor = vec4(F, 1.0);
                 // gl_FragColor = vec4(specularContrib, 1.0);
                 // gl_FragColor = vec4(envBRDF, 0.0 , 1.0);
-                gl_FragColor = vec4((1.0-Fre) * metallic * diffuseContrib + indirectSpecular , 1.0);
+                // gl_FragColor = vec4((1.0-Fre) * metallic * diffuseContrib + indirectSpecular , 1.0);
+                gl_FragColor = vec4(v_texCoord.x, v_texCoord.y, 0.0, 1.0);
                 // gl_FragColor = vec4(diffuseContrib *(1.0-F)   + specularColor * (specularContrib + F), 1.0);
                 // gl_FragColor = vec4(diffuseContrib * (1.0-F) + specularColor * F , 1.0);
                 // gl_FragColor = vec4(diffuseContrib + specularColor * (specularContrib), 1.0);

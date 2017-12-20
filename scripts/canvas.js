@@ -74,8 +74,8 @@ attributeBuffer(shaderProgram.a_Position, vertices, 3, gl.FLOAT);
 shaderProgram.a_Normal = gl.getAttribLocation(shaderProgram, "a_Normal");
 attributeBuffer(shaderProgram.a_Normal, normals, 3, gl.FLOAT);
 
-// shaderProgram.a_texCoord= gl.getAttribLocation(shaderProgram, "a_texCoord");
-// attributeBuffer(shaderProgram.a_texCoord, texCs, 2, gl.FLOAT);
+shaderProgram.a_texCoord= gl.getAttribLocation(shaderProgram, "a_texCoord");
+attributeBuffer(shaderProgram.a_texCoord, texCs, 2, gl.FLOAT);
 
 shaderProgram.u_Camera = gl.getUniformLocation(shaderProgram, "u_Camera");
 
@@ -677,7 +677,7 @@ function GenerateSphere(radius, sagment) {
     let n, a, b, c, d;
 
     for(let w = 0; w < 360; w+=del) {
-        for(let t = 0; t <= 180; t+=del) {
+        for(let t = 0; t < 90; t+=del) {
             a = [radius * this.sin(t) * this.cos(w), radius * this.cos(t), radius * this.sin(t) * this.sin(w)];
             b = [radius * this.sin(t+del) * this.cos(w), radius * this.cos(t+del), radius * this.sin(t+del) * this.sin(w)];
             c = [radius * this.sin(t+del) * this.cos(w+del), radius * this.cos(t+del), radius * this.sin(t+del) * this.sin(w+del)];
@@ -690,7 +690,11 @@ function GenerateSphere(radius, sagment) {
             nor.push(n[0], n[1], n[2]);
             n = substractVectors(c, [0, 0, 0]);
             nor.push(n[0], n[1], n[2]);
-            if((t!=0) && t!=(180-del)) { // top or bottom spot
+            //  UV
+            tex.push(t/180, w/360);             // a
+            tex.push((t+del)/180, w/360);       // b
+            tex.push((t+del)/180, (w+del)/360); // c
+            if((t!=0) && t!=(90)) { // top or bottom spot
                 d = [radius * this.sin(t) * this.cos(w + del), radius * this.cos(t), radius * this.sin(t) * this.sin(w + del)];
                 vet.push(a[0], a[1], a[2]);
                 vet.push(c[0], c[1], c[2]);
@@ -702,6 +706,50 @@ function GenerateSphere(radius, sagment) {
                 nor.push(n[0], n[1], n[2]);
                 n = substractVectors(d, [0, 0, 0]);
                 nor.push(n[0], n[1], n[2]);
+
+                //  UV
+                tex.push(t/180, w/360);             // a
+                tex.push((t+del)/180, (w+del)/360); // c
+                tex.push(t/180, (w+del)/360);       // d
+
+            }
+
+            for(let t = 180; t > 90; t-=del) {
+                a = [radius * this.sin(t) * this.cos(w), radius * this.cos(t), radius * this.sin(t) * this.sin(w)];
+                b = [radius * this.sin(t-del) * this.cos(w), radius * this.cos(t-del), radius * this.sin(t-del) * this.sin(w)];
+                c = [radius * this.sin(t-del) * this.cos(w+del), radius * this.cos(t-del), radius * this.sin(t-del) * this.sin(w+del)];
+                vet.push(a[0], a[1], a[2]);
+                vet.push(b[0], b[1], b[2]);
+                vet.push(c[0], c[1], c[2]);
+                let n = substractVectors(a, [0, 0, 0]);
+                nor.push(n[0], n[1], n[2]);
+                n = substractVectors(b, [0, 0, 0]);
+                nor.push(n[0], n[1], n[2]);
+                n = substractVectors(c, [0, 0, 0]);
+                nor.push(n[0], n[1], n[2]);
+                //  UV
+                tex.push(t/180, w/360);             // a
+                tex.push((t-del)/180, w/360);       // b
+                tex.push((t-del)/180, (w+del)/360); // c
+                if((t!=0) && t!=(90-del)) { // top or bottom spot
+                    d = [radius * this.sin(t) * this.cos(w + del), radius * this.cos(t), radius * this.sin(t) * this.sin(w + del)];
+                    vet.push(a[0], a[1], a[2]);
+                    vet.push(c[0], c[1], c[2]);
+                    vet.push(d[0], d[1], d[2]);
+
+                    let n = substractVectors(a, [0, 0, 0]);
+                    nor.push(n[0], n[1], n[2]);
+                    n = substractVectors(c, [0, 0, 0]);
+                    nor.push(n[0], n[1], n[2]);
+                    n = substractVectors(d, [0, 0, 0]);
+                    nor.push(n[0], n[1], n[2]);
+
+                    //  UV
+                    tex.push(t/180, w/360);             // a
+                    tex.push((t-del)/180, (w+del)/360); // c
+                    tex.push(t/180, (w+del)/360);       // d
+
+                }
             }
 
         }
