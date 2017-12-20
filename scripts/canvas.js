@@ -361,8 +361,8 @@ let mousemove = (e) => {
 
         let delX = e.clientX - gView.x;
         let delY = e.clientY - gView.y;
-        model.rotate(delX/5, 0, 1, 0);
-        model.rotate(delY/5, 1, 0, 0);
+        model.rotate(delX/1, 0, 1, 0);
+        model.rotate(-delY/1, 1, 0, 0);
         // model.rotate(20/1000*d, 0, 1, 0);
 
         // matrix.translate(0, 0, -1/1000*d);
