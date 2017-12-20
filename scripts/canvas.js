@@ -305,7 +305,7 @@ cube5.onload = () => {
 }
 
 let image = new Image();
-image.src = './hello.png';
+image.src = './brdf.png';
 image.onload = () => {
     gl.useProgram(shaderProgram);
 
