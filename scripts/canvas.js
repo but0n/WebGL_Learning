@@ -426,7 +426,7 @@ let drawSkyBox = () => {
         0, 2, 3
     ]), gl.STATIC_DRAW);
 
-    gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0); // Render
+    // gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_SHORT, 0); // Render
 
 }
 
