@@ -249,9 +249,77 @@ shader1.u_ProjeMatrix = gl.getUniformLocation(shader1, "u_ProjeMatrix");
 let imageTexture = gl.createTexture(); // Create Textrue
 shaderProgram.textureLoc = gl.getUniformLocation(shaderProgram, 'u_sampler');
 
-//  PBR Material
+//                                  PBR Material
 //=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_
 shaderProgram.uvNormal = gl.getUniformLocation(shaderProgram, 'uv_Normal');
+let meshNormalTexture = gl.createTexture();
+let meshNormal = new Image();
+meshNormal.src = './meshes/mesh1/normal.png';
+meshNormal.onload = () => {
+    gl.useProgram(shaderProgram);
+
+    // gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+    gl.activeTexture(gl.TEXTURE2);
+    gl.bindTexture(gl.TEXTURE_2D, meshNormalTexture);
+    // Configure
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, meshNormal);
+    // Sending data
+    gl.uniform1i(shaderProgram.uvNormal, 2);
+}
+//=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_
+shaderProgram.uvBasecolor = gl.getUniformLocation(shaderProgram, 'uv_Basecolor');
+let meshBasecolorTexture = gl.createTexture();
+let meshBasecolor = new Image();
+meshBasecolor.src = './meshes/mesh1/basecolor.png';
+meshBasecolor.onload = () => {
+    gl.useProgram(shaderProgram);
+
+    // gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+    gl.activeTexture(gl.TEXTURE4);
+    gl.bindTexture(gl.TEXTURE_2D, meshBasecolorTexture);
+    // Configure
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, meshBasecolor);
+    // Sending data
+    gl.uniform1i(shaderProgram.uvBasecolor, 4);
+}
+//=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_
+shaderProgram.uvMetallic = gl.getUniformLocation(shaderProgram, 'uv_Metallic');
+let meshMetallicTexture = gl.createTexture();
+let meshMetallic = new Image();
+meshMetallic.src = './meshes/mesh1/metallic.png';
+meshMetallic.onload = () => {
+    gl.useProgram(shaderProgram);
+
+    // gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+    gl.activeTexture(gl.TEXTURE5);
+    gl.bindTexture(gl.TEXTURE_2D, meshMetallicTexture);
+    // Configure
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, meshMetallic);
+    // Sending data
+    gl.uniform1i(shaderProgram.uvMetallic, 5);
+}
+//=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_
+shaderProgram.uvRoughness = gl.getUniformLocation(shaderProgram, 'uv_Roughness');
+let meshRoughnessTexture = gl.createTexture();
+let meshRoughness = new Image();
+meshRoughness.src = './meshes/mesh1/roughness.png';
+meshRoughness.onload = () => {
+    gl.useProgram(shaderProgram);
+
+    // gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+    gl.activeTexture(gl.TEXTURE6);
+    gl.bindTexture(gl.TEXTURE_2D, meshRoughnessTexture);
+    // Configure
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, meshRoughness);
+    // Sending data
+    gl.uniform1i(shaderProgram.uvRoughness, 6);
+}
+//=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_
+
 // shaderProgram.uvNormal = gl.getUniformLocation(shaderProgram, 'uv_Normal');
 
 
@@ -310,21 +378,7 @@ cube5.onload = () => {
     loadCubeMap(gl);
 }
 
-let meshNormalTexture = gl.createTexture();
-let meshNormal = new Image();
-meshNormal.src = './meshes/mesh1/basecolor.png';
-meshNormal.onload = () => {
-    gl.useProgram(shaderProgram);
 
-    // gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
-    gl.activeTexture(gl.TEXTURE2);
-    gl.bindTexture(gl.TEXTURE_2D, meshNormalTexture);
-    // Configure
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, meshNormal);
-    // Sending data
-    gl.uniform1i(shaderProgram.uvNormal, 2);
-}
 
 let image = new Image();
 image.src = './brdf.png';
