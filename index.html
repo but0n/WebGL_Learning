@@ -116,7 +116,7 @@
                 // vec3 diffuseContrib = vec3(0.3, 0.8, 0.9) * max(dot(n, l), 0.01); // Lamber
                 vec3 diffuseContrib = vec3(0.1, 0.6, 1.0);
 
-                vec2 envBRDF = texture2D(brdf, vec2(NdotV, 0.1)).rg;
+                vec2 envBRDF = texture2D(brdf, vec2(NdotV, roughness)).rg;
 
                 vec3 Fre = Fresnel(f0, NdotV);
                 vec3 indirectSpecular = specularColor * (Fre * envBRDF.r + envBRDF.g);
