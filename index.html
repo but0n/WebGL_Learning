@@ -76,9 +76,15 @@
             }
 
             void main () {
-                // vec4 color = texture2D(u_sampler, v_texCoord);
 
-                vec3 n = normalize(v_normal);
+                // PBR Material
+                vec4 PBRBasecolor = texture2D(uv_Basecolor, v_texCoord);
+                vec4 PBRNormal = texture2D(uv_Normal, v_texCoord);
+                vec4 PBRMetallic = texture2D(uv_Metallic, v_texCoord);
+                vec4 PBRRoughness = texture2D(uv_Roughness, v_texCoord);
+
+                vec3 normalAddation = PBRNormal.xyz;
+                vec3 n = normalize(v_normal + normalAddation);
                 vec3 v = normalize(( vec4(u_Camera - v_pos, 0.0)).xyz);
                 // vec3 v = normalize(u_Camera - v_pos);
                 // vec3 l = normalize(u_lightDirection);
@@ -89,8 +95,8 @@
                 vec3 F;
                 vec3 f0 = vec3(0.04);
                 float metallic = 0.9;
-                // float VdotH = dot(v, h);
-                float VdotH = clamp(dot(v, h), 0.0, 1.0);
+                float VdotH = dot(v, h);
+                // float VdotH = clamp(dot(v, h), 0.0, 1.0);
                 F = Fresnel(f0, VdotH);
 
         // Distribution
@@ -115,24 +121,29 @@
                 float f90 = 2.0 * LdotH * LdotH * roughness - 0.5;
                 vec3 color = vec3(0.0, 0.4, 0.8);
                 vec3 specularColor = textureCube(u_sky, (v_model *vec4(reflect(-v,n), 1.0)).xyz).rgb;
-                color = (color) * (1.0 + f90 * pow((1.0 - NdotL), 5.0)) * (1.0 + f90 * pow((1.0 - NdotV), 5.0));
+                // color = (color) * (1.0 + f90 * pow((1.0 - NdotL), 5.0)) * (1.0 + f90 * pow((1.0 - NdotV), 5.0));
                 // vec3 diffuseContrib = (1.0 - F) * color;
                 // vec3 diffuseContrib = vec3(0.3, 0.8, 0.9) * max(dot(n, l), 0.01); // Lamber
                 vec3 diffuseContrib = vec3(0.1, 0.6, 1.0);
 
-                vec2 envBRDF = texture2D(brdf, vec2(NdotV, roughness)).rg;
+                vec2 envBRDF = texture2D(brdf, vec2(NdotV, PBRRoughness)).rg;
 
                 vec3 Fre = Fresnel(f0, NdotV);
                 vec3 indirectSpecular = specularColor * (Fre * envBRDF.r + envBRDF.g);
 
-                vec4 Texcolor = texture2D(uv_Basecolor, v_texCoord);
 
-                // gl_FragColor = vec4(F, 1.0);
+                // gl_FragColor = vec4(Fre, 1.0);
                 // gl_FragColor = vec4(specularContrib, 1.0);
                 // gl_FragColor = vec4(envBRDF, 0.0 , 1.0);
                 // gl_FragColor = vec4((1.0-Fre) * metallic * diffuseContrib + indirectSpecular , 1.0);       // IBL+PBR
+                gl_FragColor = vec4(1.0-Fre, 1.0)    * PBRBasecolor  + vec4(indirectSpecular, 0.0);
+
+
+
+
+                // gl_FragColor = vec4((1.0-Fre) * metallic * diffuseContrib + indirectSpecular , 1.0);       // IBL+PBR
                 // gl_FragColor = vec4(v_texCoord.x, v_texCoord.y, 0.0, 1.0);                              // UV
-                gl_FragColor = vec4(Texcolor);                              // UV
+                // gl_FragColor = vec4(PBRBasecolor);                              // UV
                 // gl_FragColor = vec4(diffuseContrib *(1.0-F)   + specularColor * (specularContrib + F), 1.0);
                 // gl_FragColor = vec4(diffuseContrib * (1.0-F) + specularColor * F , 1.0);
                 // gl_FragColor = vec4(diffuseContrib + specularColor * (specularContrib), 1.0);
