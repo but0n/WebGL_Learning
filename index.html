@@ -44,6 +44,7 @@
             uniform vec3 u_lightDirection;   // Current frame const 光源位置
 
             uniform samplerCube u_sky;
+            uniform sampler2D   brdf;       // BRDF LUT
 
             uniform vec3 u_Camera;
             varying mat4 v_model;
