@@ -247,7 +247,13 @@ shader1.u_ProjeMatrix = gl.getUniformLocation(shader1, "u_ProjeMatrix");
 
 // Main Textrue
 let imageTexture = gl.createTexture(); // Create Textrue
-let textureLoc = gl.getUniformLocation(shaderProgram, 'u_sampler');
+shaderProgram.textureLoc = gl.getUniformLocation(shaderProgram, 'u_sampler');
+
+//  PBR Material
+//=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_
+shaderProgram.uvNormal = gl.getUniformLocation(shaderProgram, 'uv_Normal');
+// shaderProgram.uvNormal = gl.getUniformLocation(shaderProgram, 'uv_Normal');
+
 
 let skybox = gl.createTexture();
 // let mapPath = './blurmap/';
@@ -304,6 +310,22 @@ cube5.onload = () => {
     loadCubeMap(gl);
 }
 
+let meshNormalTexture = gl.createTexture();
+let meshNormal = new Image();
+meshNormal.src = './meshes/mesh1/basecolor.png';
+meshNormal.onload = () => {
+    gl.useProgram(shaderProgram);
+
+    // gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+    gl.activeTexture(gl.TEXTURE2);
+    gl.bindTexture(gl.TEXTURE_2D, meshNormalTexture);
+    // Configure
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, meshNormal);
+    // Sending data
+    gl.uniform1i(shaderProgram.uvNormal, 2);
+}
+
 let image = new Image();
 image.src = './brdf.png';
 image.onload = () => {
@@ -320,7 +342,7 @@ image.onload = () => {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
     // Sending data
-    gl.uniform1i(textureLoc, 0);
+    gl.uniform1i(shaderProgram.textureLoc, 0);
 
     // gl.activeTexture(gl.TEXTURE1);
 // Vertex remap index
@@ -330,12 +352,12 @@ image.onload = () => {
     gl.drawElements(gl.TRIANGLES, mod.map.length, gl.UNSIGNED_SHORT, 0); // Render
 
 
-    gl.useProgram(shader1);
-
-    gl.uniformMatrix4fv(shader1.u_ModelMatrix, false, model.elements);
-    gl.uniformMatrix4fv(shader1.u_ViewMatrix, false, view.elements);
-    gl.uniformMatrix4fv(shader1.u_ProjeMatrix, false, proje.elements);
-    drawSkyBox();
+    // gl.useProgram(shader1);
+    //
+    // gl.uniformMatrix4fv(shader1.u_ModelMatrix, false, model.elements);
+    // gl.uniformMatrix4fv(shader1.u_ViewMatrix, false, view.elements);
+    // gl.uniformMatrix4fv(shader1.u_ProjeMatrix, false, proje.elements);
+    // drawSkyBox();
     // gl.drawElements(gl.TRIANGLES, mod.map.length, gl.UNSIGNED_SHORT, 0); // Render
     // move();
 // return;
@@ -457,7 +479,7 @@ let move = () => {
     gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, mod.map, gl.STATIC_DRAW);
     // Configure
     // Sending data
-    gl.uniform1i(textureLoc, 1);
+    gl.uniform1i(shaderProgram.textureLoc, 1);
 
     gl.activeTexture(gl.TEXTURE1);
 // Vertex remap index
@@ -492,7 +514,7 @@ function loadCubeMap(gl) {
 
     // gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, image);
     // // Sending data
-    // gl.uniform1i(textureLoc, 0);
+    // gl.uniform1i(shaderProgram.textureLoc, 0);
 }
 function bloom() {
     // NOTE: Toggle target buffer                       NOTE

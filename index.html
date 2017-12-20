@@ -45,6 +45,7 @@
 
             uniform samplerCube u_sky;
             uniform sampler2D   brdf;       // BRDF LUT
+            uniform sampler2D   uv_Normal;
 
             uniform vec3 u_Camera;
             varying mat4 v_model;
@@ -121,11 +122,14 @@
                 vec3 Fre = Fresnel(f0, NdotV);
                 vec3 indirectSpecular = specularColor * (Fre * envBRDF.r + envBRDF.g);
 
+                vec4 Texcolor = texture2D(uv_Normal, v_texCoord);
+
                 // gl_FragColor = vec4(F, 1.0);
                 // gl_FragColor = vec4(specularContrib, 1.0);
                 // gl_FragColor = vec4(envBRDF, 0.0 , 1.0);
                 // gl_FragColor = vec4((1.0-Fre) * metallic * diffuseContrib + indirectSpecular , 1.0);
-                gl_FragColor = vec4(v_texCoord.x, v_texCoord.y, 0.0, 1.0);
+                // gl_FragColor = vec4(v_texCoord.x, v_texCoord.y, 0.0, 1.0);                              // UV
+                gl_FragColor = vec4(Texcolor);                              // UV
                 // gl_FragColor = vec4(diffuseContrib *(1.0-F)   + specularColor * (specularContrib + F), 1.0);
                 // gl_FragColor = vec4(diffuseContrib * (1.0-F) + specularColor * F , 1.0);
                 // gl_FragColor = vec4(diffuseContrib + specularColor * (specularContrib), 1.0);
