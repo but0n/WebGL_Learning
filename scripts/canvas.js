@@ -251,7 +251,7 @@ shaderProgram.textureLoc = gl.getUniformLocation(shaderProgram, 'u_sampler');
 
 //                                  PBR Material
 //=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_
-let MESH_PATH = "/mesh6/"
+let MESH_PATH = "/mesh4/"
 shaderProgram.uvNormal = gl.getUniformLocation(shaderProgram, 'uv_Normal');
 let meshNormalTexture = gl.createTexture();
 let meshNormal = new Image();
@@ -325,8 +325,10 @@ meshRoughness.onload = () => {
 
 
 let skybox = gl.createTexture();
-let mapPath = './blurmap/';
+// let mapPath = './blurmap/';
 // let mapPath = './map/';
+// let mapPath = './dockmap/';
+let mapPath = './housemap/';
 
 let cube0 = new Image();
 let cube0Texture = gl.createTexture();
