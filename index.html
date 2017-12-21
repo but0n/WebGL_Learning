@@ -85,8 +85,8 @@
 
                 vec3 normalAddation = PBRNormal.xyz;
                 vec3 n = normalize(v_normal + normalAddation);
-                vec3 v = normalize(( vec4(u_Camera - v_pos, 0.0)).xyz);
-                // vec3 v = normalize(u_Camera - v_pos);
+                // vec3 v = normalize(( vec4(u_Camera - v_pos, 0.0)).xyz);
+                vec3 v = normalize(u_Camera - v_pos);
                 // vec3 l = normalize(u_lightDirection);
                 vec3 l = normalize((v_model * vec4(u_lightDirection, 0.0)).xyz);
                 vec3 h = normalize(l+v);
@@ -97,8 +97,6 @@
                 vec3 f0 = 1.0-PBRMetallic.xyz;
                 float metallic = 0.9;
                 float VdotH = dot(v, h);
-                // float VdotH = clamp(dot(v, h), 0.0, 1.0);
-                // F = Fresnel(f0, VdotH, PBRRoughness.xyz);
 
         // Distribution
                 float D;
@@ -122,9 +120,9 @@
                 float f90 = 2.0 * LdotH * LdotH * roughness - 0.5;
                 vec3 color = vec3(0.0, 0.4, 0.8);
                 vec3 specularColor = textureCube(u_sky, (v_model *vec4(reflect(-v,n), 1.0)).xyz).rgb;
-                // color = (color) * (1.0 + f90 * pow((1.0 - NdotL), 5.0)) * (1.0 + f90 * pow((1.0 - NdotV), 5.0));
+                // color = (color) * (1.0 + f90 * pow((1.0 - NdotL), 5.0)) * (1.0 + f90 * pow((1.0 - NdotV), 5.0)); // Disney
                 // vec3 diffuseContrib = (1.0 - F) * color;
-                // vec3 diffuseContrib = vec3(0.3, 0.8, 0.9) * max(dot(n, l), 0.01); // Lamber
+                // vec3 diffuseContrib = vec3(0.3, 0.8, 0.9) * max(dot(n, l), 0.01); // Lambert
                 // vec3 diffuseContrib = vec3(0.1, 0.6, 1.0);
 
                 vec2 envBRDF = texture2D(brdf, vec2(NdotV, PBRRoughness)).rg;
@@ -136,19 +134,13 @@
                 // gl_FragColor = vec4(Fre, 1.0);
                 // gl_FragColor = vec4(specularContrib, 1.0);
                 // gl_FragColor = vec4(envBRDF, 0.0 , 1.0);
-                gl_FragColor = vec4((1.0-Fre) * (PBRMetallic.xyz) * PBRBasecolor.xyz + indirectSpecular , 1.0);       // IBL+PBR
                 // gl_FragColor = vec4(indirectSpecular, 1.0);
-                // gl_FragColor = vec4(1.0-Fre, 1.0)  *PBRMetallic  * PBRBasecolor  + vec4(indirectSpecular, 0.0);
+                gl_FragColor = vec4(1.0-Fre, 1.0) * PBRMetallic  * PBRBasecolor  + vec4(indirectSpecular, 0.0); // IBL+PBR
 
 
 
 
-                // gl_FragColor = vec4((1.0-Fre) * metallic * diffuseContrib + indirectSpecular , 1.0);       // IBL+PBR
-                // gl_FragColor = vec4(v_texCoord.x, v_texCoord.y, 0.0, 1.0);                              // UV
                 // gl_FragColor = vec4(PBRBasecolor);                              // UV
-                // gl_FragColor = vec4(diffuseContrib *(1.0-F)   + specularColor * (specularContrib + F), 1.0);
-                // gl_FragColor = vec4(diffuseContrib * (1.0-F) + specularColor * F , 1.0);
-                // gl_FragColor = vec4(diffuseContrib + specularColor * (specularContrib), 1.0);
             }
         </script>
 <!-- Channel 1 -->
