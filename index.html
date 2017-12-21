@@ -130,17 +130,17 @@
                 vec3 Fre = Fresnel(f0, NdotV, PBRRoughness.xyz);
                 vec3 indirectSpecular = specularColor * (Fre * envBRDF.r + envBRDF.g);
 
-
-                // gl_FragColor = vec4(Fre, 1.0);
-                // gl_FragColor = vec4(specularContrib, 1.0);
-                // gl_FragColor = vec4(envBRDF, 0.0 , 1.0);
-                // gl_FragColor = vec4(indirectSpecular, 1.0);
+            // Debug
+                // gl_FragColor = vec4(Fre, 1.0);               // Fresnel
+                // gl_FragColor = vec4(envBRDF, 0.0 , 1.0);     // BRDF LUT
+                // gl_FragColor = vec4(indirectSpecular, 1.0);  // IBL+BRDF
+                // gl_FragColor = vec4(PBRBasecolor);           // UV
+            // Final Result
                 gl_FragColor = vec4(1.0-Fre, 1.0) * PBRMetallic  * PBRBasecolor  + vec4(indirectSpecular, 0.0); // IBL+PBR
 
 
 
 
-                // gl_FragColor = vec4(PBRBasecolor);                              // UV
             }
         </script>
 <!-- Channel 1 -->
