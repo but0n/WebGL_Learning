@@ -58,8 +58,8 @@
             varying vec2 v_texCoord;    // 每个片元的纹素坐标
             // varying vec4 v_color;           // 每个片元的固有色
 
-            vec3 Fresnel(vec3 f0, float LoN) {
-                return f0 + (1.0 - f0) * pow(1.0 - LoN, 2.0);
+            vec3 Fresnel(vec3 f0, float LoN, vec3 roughness) {
+                return f0 + (max(vec3(1.0 - roughness), f0) - f0) * pow(1.0 - LoN, 5.0);
             }
             float Distribution(float roughness, float NoH) {
                 float alpha = roughness * roughness;
@@ -93,11 +93,12 @@
 
         // Fresnel - Specular Reflection
                 vec3 F;
-                vec3 f0 = vec3(0.04);
+                // vec3 f0 = vec3(0.04);
+                vec3 f0 = 1.0-PBRMetallic.xyz;
                 float metallic = 0.9;
                 float VdotH = dot(v, h);
                 // float VdotH = clamp(dot(v, h), 0.0, 1.0);
-                F = Fresnel(f0, VdotH);
+                // F = Fresnel(f0, VdotH, PBRRoughness.xyz);
 
         // Distribution
                 float D;
@@ -108,13 +109,13 @@
                 // float NdotV = abs(dot(n, v));
                 float NdotV = clamp(dot(n, v), 0.000, 0.99);
 
-                D = Distribution(roughness, NdotH);
+                // D = Distribution(roughness, NdotH);
 
         // Geometric
                 float G;
                 G = Geometric(roughness, NdotL, NdotV);
 
-                vec3 specularContrib =  F * G * D / (4.0 * NdotL * NdotV);
+                // vec3 specularContrib =  F * G * D / (4.0 * NdotL * NdotV);
 
         // Diffuse
                 float LdotH = dot(l, h);
@@ -124,19 +125,20 @@
                 // color = (color) * (1.0 + f90 * pow((1.0 - NdotL), 5.0)) * (1.0 + f90 * pow((1.0 - NdotV), 5.0));
                 // vec3 diffuseContrib = (1.0 - F) * color;
                 // vec3 diffuseContrib = vec3(0.3, 0.8, 0.9) * max(dot(n, l), 0.01); // Lamber
-                vec3 diffuseContrib = vec3(0.1, 0.6, 1.0);
+                // vec3 diffuseContrib = vec3(0.1, 0.6, 1.0);
 
                 vec2 envBRDF = texture2D(brdf, vec2(NdotV, PBRRoughness)).rg;
 
-                vec3 Fre = Fresnel(f0, NdotV);
+                vec3 Fre = Fresnel(f0, NdotV, PBRRoughness.xyz);
                 vec3 indirectSpecular = specularColor * (Fre * envBRDF.r + envBRDF.g);
 
 
                 // gl_FragColor = vec4(Fre, 1.0);
                 // gl_FragColor = vec4(specularContrib, 1.0);
                 // gl_FragColor = vec4(envBRDF, 0.0 , 1.0);
-                // gl_FragColor = vec4((1.0-Fre) * metallic * diffuseContrib + indirectSpecular , 1.0);       // IBL+PBR
-                gl_FragColor = vec4(1.0-Fre, 1.0)    * PBRBasecolor  + vec4(indirectSpecular, 0.0);
+                gl_FragColor = vec4((1.0-Fre) * (PBRMetallic.xyz) * PBRBasecolor.xyz + indirectSpecular , 1.0);       // IBL+PBR
+                // gl_FragColor = vec4(indirectSpecular, 1.0);
+                // gl_FragColor = vec4(1.0-Fre, 1.0)  *PBRMetallic  * PBRBasecolor  + vec4(indirectSpecular, 0.0);
 
 
 
