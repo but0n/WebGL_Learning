@@ -95,6 +95,7 @@ gl.enable(gl.DEPTH_TEST);
 gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_COLOR_BIT);
 
 let model = new Matrix4();
+model.rotate(180, 0, 1, 0);
 // model.rotate(-45, 1, 0, 0);
 // model.rotate(-45, 0, 0, 1);
 
@@ -440,8 +441,8 @@ let mousemove = (e) => {
 
         let delX = e.clientX - gView.x;
         let delY = e.clientY - gView.y;
-        model.rotate(delX/1, 0, 1, 0);
-        model.rotate(-delY/1, 1, 0, 0);
+        model.rotate(delX, 0, 1, 0);
+        model.rotate(-delY, 1, 0, 0);
         // model.rotate(20/1000*d, 0, 1, 0);
 
         // matrix.translate(0, 0, -1/1000*d);
