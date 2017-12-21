@@ -105,8 +105,7 @@
 
                 float NdotH = clamp(dot(n, h), 0.001, 1.0);
                 float NdotL = clamp(dot(n, l), 0.001, 1.0);
-                // float NdotV = abs(dot(n, v));
-                float NdotV = clamp(dot(n, v), 0.000, 0.99);
+                float NdotV = abs(dot(n, v));
 
                 // D = Distribution(roughness, NdotH);
 
