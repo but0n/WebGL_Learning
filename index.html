@@ -134,7 +134,7 @@
 
         // Geometric
                 float G;
-                G = Geometric(roughness, NdotL, NdotV);
+                // G = Geometric(roughness, NdotL, NdotV);
 
                 // vec3 specularContrib =  F * G * D / (4.0 * NdotL * NdotV);
 
@@ -143,15 +143,13 @@
                 float f90 = 2.0 * LdotH * LdotH * roughness - 0.5;
                 vec3 color = vec3(0.0, 0.4, 0.8);
                 vec3 specularColor = textureCube(u_sky, (v_model *vec4(reflect(-v,n), 1.0)).xyz).rgb;
-                // color = (color) * (1.0 + f90 * pow((1.0 - NdotL), 5.0)) * (1.0 + f90 * pow((1.0 - NdotV), 5.0)); // Disney
-                // vec3 diffuseContrib = (1.0 - F) * color;
                 // vec3 diffuseContrib = vec3(0.3, 0.8, 0.9) * max(dot(n, l), 0.01); // Lambert
-                // vec3 diffuseContrib = vec3(0.1, 0.6, 1.0);
 
                 vec2 envBRDF = texture2D(brdf, vec2(NdotV, PBRRoughness)).rg;
 
-                vec3 Fre = Fresnel(f0, NdotV, PBRRoughness);
+                vec3 Fre = Fresnel(f0, NdotV, PBRRoughness);    // ?required?
                 vec3 indirectSpecular = specularColor * (Fre * envBRDF.r + envBRDF.g);
+                // vec3 indirectSpecular = specularColor * (f0 * envBRDF.r + envBRDF.g); // NOTE
 
             // Debug
                 // gl_FragColor = vec4(Fre, 1.0);               // Fresnel
