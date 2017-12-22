@@ -80,7 +80,7 @@
                 // PBR Material
                 vec4 PBRBasecolor = texture2D(uv_Basecolor, v_texCoord);
                 vec4 PBRNormal = texture2D(uv_Normal, v_texCoord);
-                vec4 PBRMetallic = vec4(texture2D(uv_MetallicRoughness, v_texCoord).rgb, 1.0);
+                vec3 PBRMetallic = texture2D(uv_MetallicRoughness, v_texCoord).rgb;
                 float PBRRoughness = texture2D(uv_MetallicRoughness, v_texCoord).a;
                 vec4 PBRAO = texture2D(uv_AO, v_texCoord);
 
@@ -95,9 +95,7 @@
         // Fresnel - Specular Reflection
                 vec3 F;
                 vec3 f0 = vec3(0.04);
-                f0 = mix(f0, PBRBasecolor.xyz, PBRMetallic.xyz);
-                // vec3 f0 = 1.0-PBRMetallic.xyz;
-                float metallic = 0.9;
+                f0 = mix(f0, PBRBasecolor.xyz, PBRMetallic);
                 float VdotH = dot(v, h);
 
         // Distribution
@@ -106,7 +104,8 @@
 
                 float NdotH = clamp(dot(n, h), 0.001, 1.0);
                 float NdotL = clamp(dot(n, l), 0.001, 1.0);
-                float NdotV = abs(dot(n, v));
+                float NdotV = clamp(dot(n, v), 0.001, 0.99);
+                // float NdotV = abs(dot(n, v));
 
                 // D = Distribution(roughness, NdotH);
 
@@ -137,7 +136,7 @@
                 // gl_FragColor = vec4(indirectSpecular, 1.0);  // IBL+BRDF
                 // gl_FragColor = vec4(PBRBasecolor);           // UV
             // Final Result
-                gl_FragColor = vec4(1.0-Fre, 1.0) * (1.0-PBRMetallic)  * PBRBasecolor  + vec4(indirectSpecular, 1.0) * PBRAO; // IBL+PBR
+                gl_FragColor = (vec4((1.0-Fre) * (1.0-PBRMetallic), 1.0)  * PBRBasecolor  + vec4(indirectSpecular, 1.0)) * PBRAO; // IBL+PBR
 
 
 

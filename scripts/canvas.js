@@ -328,8 +328,8 @@ meshAO.onload = () => {
 let skybox = gl.createTexture();
 // let mapPath = './blurmap/';
 // let mapPath = './map/';
-// let mapPath = './dockmap/';
-let mapPath = './housemap/';
+let mapPath = './dockmap/';
+// let mapPath = './housemap/';
 
 let cube0 = new Image();
 let cube0Texture = gl.createTexture();
