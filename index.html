@@ -84,7 +84,7 @@
                 float PBRRoughness = texture2D(uv_MetallicRoughness, v_texCoord).a;
                 vec4 PBRAO = texture2D(uv_AO, v_texCoord);
 
-                vec3 normalAddation = PBRNormal.xyz;
+                vec3 normalAddation = PBRNormal.xyz * 2.0 - 1.0;
                 vec3 n = normalize(v_normal + normalAddation);
                 // vec3 v = normalize(( vec4(u_Camera - v_pos, 0.0)).xyz);
                 vec3 v = normalize(u_Camera - v_pos);
