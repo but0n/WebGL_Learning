@@ -95,7 +95,7 @@ gl.enable(gl.DEPTH_TEST);
 gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_COLOR_BIT);
 
 let model = new Matrix4();
-model.rotate(180, 0, 1, 0);
+// model.rotate(180, 0, 1, 0);
 // model.rotate(-45, 1, 0, 0);
 // model.rotate(-45, 0, 0, 1);
 
@@ -252,7 +252,7 @@ shaderProgram.textureLoc = gl.getUniformLocation(shaderProgram, 'u_sampler');
 
 //                                  PBR Material
 //=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_
-let MESH_PATH = "/mesh4/"
+let MESH_PATH = "/pbr01/"
 shaderProgram.uvNormal = gl.getUniformLocation(shaderProgram, 'uv_Normal');
 let meshNormalTexture = gl.createTexture();
 let meshNormal = new Image();
@@ -287,38 +287,38 @@ meshBasecolor.onload = () => {
     gl.uniform1i(shaderProgram.uvBasecolor, 4);
 }
 //=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_
-shaderProgram.uvMetallic = gl.getUniformLocation(shaderProgram, 'uv_Metallic');
-let meshMetallicTexture = gl.createTexture();
-let meshMetallic = new Image();
-meshMetallic.src = './meshes'+MESH_PATH+'metallic.png';
-meshMetallic.onload = () => {
+shaderProgram.uvMetallicRoughness = gl.getUniformLocation(shaderProgram, 'uv_MetallicRoughness');
+let meshMetallicRoughnessTexture = gl.createTexture();
+let meshMetallicRoughness = new Image();
+meshMetallicRoughness.src = './meshes'+MESH_PATH+'metallicRoughness.png';
+meshMetallicRoughness.onload = () => {
     gl.useProgram(shaderProgram);
 
     // gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
     gl.activeTexture(gl.TEXTURE5);
-    gl.bindTexture(gl.TEXTURE_2D, meshMetallicTexture);
+    gl.bindTexture(gl.TEXTURE_2D, meshMetallicRoughnessTexture);
     // Configure
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, meshMetallic);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, meshMetallicRoughness);
     // Sending data
-    gl.uniform1i(shaderProgram.uvMetallic, 5);
+    gl.uniform1i(shaderProgram.uvMetallicRoughness, 5);
 }
 //=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_
-shaderProgram.uvRoughness = gl.getUniformLocation(shaderProgram, 'uv_Roughness');
-let meshRoughnessTexture = gl.createTexture();
-let meshRoughness = new Image();
-meshRoughness.src = './meshes'+MESH_PATH+'roughness.png';
-meshRoughness.onload = () => {
+shaderProgram.uvAO = gl.getUniformLocation(shaderProgram, 'uv_AO');
+let meshAOTexture = gl.createTexture();
+let meshAO = new Image();
+meshAO.src = './meshes'+MESH_PATH+'AO.png';
+meshAO.onload = () => {
     gl.useProgram(shaderProgram);
 
     // gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
     gl.activeTexture(gl.TEXTURE6);
-    gl.bindTexture(gl.TEXTURE_2D, meshRoughnessTexture);
+    gl.bindTexture(gl.TEXTURE_2D, meshAOTexture);
     // Configure
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, meshRoughness);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, gl.RGB, gl.UNSIGNED_BYTE, meshAO);
     // Sending data
-    gl.uniform1i(shaderProgram.uvRoughness, 6);
+    gl.uniform1i(shaderProgram.uvAO, 6);
 }
 //=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_
 

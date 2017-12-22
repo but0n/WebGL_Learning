@@ -47,8 +47,8 @@
             uniform sampler2D   brdf;       // BRDF LUT
             uniform sampler2D   uv_Normal;
             uniform sampler2D   uv_Basecolor;
-            uniform sampler2D   uv_Metallic;
-            uniform sampler2D   uv_Roughness;
+            uniform sampler2D   uv_MetallicRoughness;
+            uniform sampler2D   uv_AO;
 
             uniform vec3 u_Camera;
             varying mat4 v_model;
@@ -58,7 +58,7 @@
             varying vec2 v_texCoord;    // 每个片元的纹素坐标
             // varying vec4 v_color;           // 每个片元的固有色
 
-            vec3 Fresnel(vec3 f0, float LoN, vec3 roughness) {
+            vec3 Fresnel(vec3 f0, float LoN, float roughness) {
                 return f0 + (max(vec3(1.0 - roughness), f0) - f0) * pow(1.0 - LoN, 5.0);
             }
             float Distribution(float roughness, float NoH) {
@@ -80,8 +80,9 @@
                 // PBR Material
                 vec4 PBRBasecolor = texture2D(uv_Basecolor, v_texCoord);
                 vec4 PBRNormal = texture2D(uv_Normal, v_texCoord);
-                vec4 PBRMetallic = texture2D(uv_Metallic, v_texCoord);
-                vec4 PBRRoughness = texture2D(uv_Roughness, v_texCoord);
+                vec4 PBRMetallic = vec4(texture2D(uv_MetallicRoughness, v_texCoord).rgb, 1.0);
+                float PBRRoughness = texture2D(uv_MetallicRoughness, v_texCoord).a;
+                vec4 PBRAO = texture2D(uv_AO, v_texCoord);
 
                 vec3 normalAddation = PBRNormal.xyz;
                 vec3 n = normalize(v_normal + normalAddation);
@@ -127,7 +128,7 @@
 
                 vec2 envBRDF = texture2D(brdf, vec2(NdotV, PBRRoughness)).rg;
 
-                vec3 Fre = Fresnel(f0, NdotV, PBRRoughness.xyz);
+                vec3 Fre = Fresnel(f0, NdotV, PBRRoughness);
                 vec3 indirectSpecular = specularColor * (Fre * envBRDF.r + envBRDF.g);
 
             // Debug
@@ -136,7 +137,7 @@
                 // gl_FragColor = vec4(indirectSpecular, 1.0);  // IBL+BRDF
                 // gl_FragColor = vec4(PBRBasecolor);           // UV
             // Final Result
-                gl_FragColor = vec4(1.0-Fre, 1.0) * (1.0-PBRMetallic)  * PBRBasecolor  + vec4(indirectSpecular, 1.0); // IBL+PBR
+                gl_FragColor = vec4(1.0-Fre, 1.0) * (1.0-PBRMetallic)  * PBRBasecolor  + vec4(indirectSpecular, 1.0) * PBRAO; // IBL+PBR
 
 
 
