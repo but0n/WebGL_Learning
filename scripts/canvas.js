@@ -1,6 +1,6 @@
 
 let gl = document.getElementsByClassName('ctx').item(0).getContext('webgl');
-
+gl.getExtension("OES_standard_derivatives"); // TBN required
 // let rad = 1;
 // let sigma = rad*3.3;
 // let sigma2 = 2.0 * sigma * sigma;
