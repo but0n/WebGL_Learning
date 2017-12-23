@@ -62,7 +62,7 @@ gl.useProgram(shaderProgram);
 // let coloc = gl.getAttribLocation(shaderProgram, "a_Color");
 
 // let mod = GenerateModel(1.8, 0.8, 500);
-let mod = GenerateSphere(2.4, 40);
+let mod = GenerateSphere(2.58, 40);
 let vertices = mod.vertices;
 let normals = mod.normals;
 let colors = mod.color;
@@ -327,8 +327,8 @@ meshAO.onload = () => {
 
 let skybox = gl.createTexture();
 // let mapPath = './blurmap/';
-// let mapPath = './map/';
-let mapPath = './dockmap/';
+let mapPath = './map/';
+// let mapPath = './dockmap/';
 // let mapPath = './housemap/';
 
 let cube0 = new Image();
