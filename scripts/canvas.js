@@ -252,11 +252,11 @@ shaderProgram.textureLoc = gl.getUniformLocation(shaderProgram, 'u_sampler');
 
 //                                  PBR Material
 //=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_=_
-let MESH_PATH = "/pbr03/"
+let MESH_PATH = "/pbr04/"
 shaderProgram.uvNormal = gl.getUniformLocation(shaderProgram, 'uv_Normal');
 let meshNormalTexture = gl.createTexture();
 let meshNormal = new Image();
-meshNormal.src = './meshes'+MESH_PATH+'normal.png';
+meshNormal.src = './meshes'+MESH_PATH+'normal.jpg';
 meshNormal.onload = () => {
     gl.useProgram(shaderProgram);
 
@@ -273,7 +273,7 @@ meshNormal.onload = () => {
 shaderProgram.uvBasecolor = gl.getUniformLocation(shaderProgram, 'uv_Basecolor');
 let meshBasecolorTexture = gl.createTexture();
 let meshBasecolor = new Image();
-meshBasecolor.src = './meshes'+MESH_PATH+'basecolor.png';
+meshBasecolor.src = './meshes'+MESH_PATH+'basecolor.jpg';
 meshBasecolor.onload = () => {
     gl.useProgram(shaderProgram);
 
@@ -290,7 +290,7 @@ meshBasecolor.onload = () => {
 shaderProgram.uvMetallicRoughness = gl.getUniformLocation(shaderProgram, 'uv_MetallicRoughness');
 let meshMetallicRoughnessTexture = gl.createTexture();
 let meshMetallicRoughness = new Image();
-meshMetallicRoughness.src = './meshes'+MESH_PATH+'metallicRoughness.png';
+meshMetallicRoughness.src = './meshes'+MESH_PATH+'metallicRoughness.jpg';
 meshMetallicRoughness.onload = () => {
     gl.useProgram(shaderProgram);
 
@@ -307,7 +307,7 @@ meshMetallicRoughness.onload = () => {
 shaderProgram.uvAO = gl.getUniformLocation(shaderProgram, 'uv_AO');
 let meshAOTexture = gl.createTexture();
 let meshAO = new Image();
-meshAO.src = './meshes'+MESH_PATH+'AO.png';
+meshAO.src = './meshes'+MESH_PATH+'AO.jpg';
 meshAO.onload = () => {
     gl.useProgram(shaderProgram);
 

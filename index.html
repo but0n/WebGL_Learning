@@ -100,8 +100,8 @@
                 // PBR Material
                 vec4 PBRBasecolor = texture2D(uv_Basecolor, v_texCoord);
                 vec4 PBRNormal = texture2D(uv_Normal, v_texCoord);
-                vec3 PBRMetallic = texture2D(uv_MetallicRoughness, v_texCoord).rgb;
-                float PBRRoughness = texture2D(uv_MetallicRoughness, v_texCoord).a;
+                vec3 PBRMetallic = texture2D(uv_MetallicRoughness, v_texCoord).bbb;
+                float PBRRoughness = texture2D(uv_MetallicRoughness, v_texCoord).g;
                 vec4 PBRAO = texture2D(uv_AO, v_texCoord);
 
                 vec3 v = normalize(u_Camera - v_pos);
