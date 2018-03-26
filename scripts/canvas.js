@@ -523,23 +523,14 @@ let move = () => {
 
 
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_COLOR_BIT);
-    gl.useProgram(shaderProgram);
-    gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-    gl.activeTexture(gl.TEXTURE1);
-    attributeBuffer(shaderProgram.a_Position, vertices, 3, gl.FLOAT);
-
-    attributeBuffer(shaderProgram.a_Normal, normals, 3, gl.FLOAT);
 
     // attributeBuffer(shaderProgram.a_texCoord, texCs, 2, gl.FLOAT);
 
-    var vmapBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, vmapBuffer);
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, mod.map, gl.STATIC_DRAW);
     // Configure
     // Sending data
-    gl.uniform1i(shaderProgram.textureLoc, 1);
+    // gl.uniform1i(shaderProgram.textureLoc, 1);
 
-    gl.activeTexture(gl.TEXTURE1);
+    // gl.activeTexture(gl.TEXTURE1);
 // Vertex remap index
 
 
